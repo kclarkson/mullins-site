@@ -1,5 +1,5 @@
 ---
-title = "Mullins Family Reunion"
+title: "Mullins Family Reunion"
 ---
 
 Welcome.
