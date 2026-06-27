@@ -1,15 +1,153 @@
-{{- /* Home page. Starts minimal; the full home model (hero → upcoming reunion →
-       history preview → latest news → recent activity → email/donate CTAs)
-       grows in Phase 2. */ -}}
+{{- /* themes/oppal/layouts/index.html — home page (build-plan §4b home model).
+
+       Assembles the home sections in the fixed order:
+         1 Hero → upcoming reunion (build-time featured selection, Phase 1 logic)
+         2 Upcoming-reunion highlight (key facts + primary CTA)
+         3 Family-history preview
+         4 Latest news
+         5 Recent-activity stream ("community pulse")
+         6 Email + donate CTAs
+
+       The hero and the dynamic nav label both come from featured-reunion.html, so
+       the home page re-points itself each cycle with no manual edits (build-plan
+       §5). The `$isUpcoming` switch flips the wording between an upcoming gathering
+       and the most recent one (runbook 2.2).
+
+       Sections backed by partials that land in later Phase 2 tasks (recent-activity
+       2.4, donate 2.6) or in Phase 5 (email-signup) render a labelled placeholder
+       until then, and pick up the real partial automatically once it exists
+       (templates.Exists / site.GetPage guards) — so this layout is wired now and
+       fills in as the rest of Phase 2 lands. Structure only; the brand pass styles
+       it later. */ -}}
 {{ define "main" }}
-<section class="py-5">
+{{- $sel := partial "featured-reunion.html" . -}}
+
+{{- /* 1. Hero → the featured (soonest upcoming, else most recent) reunion. */ -}}
+{{- with $sel.featured }}
+  {{ partial "hero.html" (dict "page" . "isUpcoming" $sel.isUpcoming) }}
+{{- else }}
+  {{- /* No reunion pages yet — keep a single h1 so the page is never headless. */ -}}
+  <section class="reunion-hero py-5" aria-labelledby="hero-title">
+    <div class="container">
+      <h1 id="hero-title" class="hero-title mb-2">{{ site.Title }}</h1>
+      <p class="lead mb-0">{{ site.Params.description }}</p>
+    </div>
+  </section>
+{{- end }}
+
+{{- /* Welcome / intro prose from content/_index.md body. */ -}}
+{{- with .Content }}
+<section class="home-intro py-5" aria-label="Welcome">
   <div class="container">
-    <div class="row justify-content-center text-center">
-      <div class="col-lg-8">
-        <h1 class="display-4 mb-3">{{ .Title }}</h1>
-        {{ with .Content }}<div class="lead">{{ . }}</div>{{ end }}
-      </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-8 lead">{{ . }}</div>
     </div>
   </div>
 </section>
+{{- end }}
+
+<div class="container">
+
+  {{- /* 2. Upcoming-reunion highlight — key facts + CTA for the featured year. */ -}}
+  {{- with $sel.featured }}
+  <section class="home-section py-5 border-top" aria-labelledby="home-reunion-h">
+    <h2 id="home-reunion-h" class="h3 mb-4">
+      {{ if $sel.isUpcoming }}The next gathering{{ else }}Our most recent reunion{{ end }}
+    </h2>
+    <div class="row g-4 align-items-start">
+      <div class="col-md-7">
+        <p class="h4 mb-1">{{ .Title }}</p>
+        {{- with .Params.theme }}<p class="text-secondary mb-3">{{ . }}</p>{{ end }}
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Dates</dt>
+          <dd class="col-sm-8">
+            {{ .Date.Format "January 2" }}{{ with .Params.end_date }}–{{ (time .).Format "January 2, 2006" }}{{ else }}{{ .Date.Format ", 2006" }}{{ end }}
+          </dd>
+          {{- with .Params.city }}<dt class="col-sm-4">Location</dt><dd class="col-sm-8">{{ . }}</dd>{{ end }}
+          {{- with (or .Params.venue .Params.hotel) }}<dt class="col-sm-4">Venue</dt><dd class="col-sm-8">{{ . }}</dd>{{ end }}
+        </dl>
+      </div>
+      <div class="col-md-5">
+        <div class="d-flex flex-column gap-2">
+          {{- if $sel.isUpcoming }}
+            <a class="btn btn-primary" href="{{ (.GetPage "register").RelPermalink | default (printf "%sregister/" .RelPermalink) }}">Register now</a>
+          {{- else }}
+            <a class="btn btn-primary" href="{{ (.GetPage "photos").RelPermalink | default (printf "%sphotos/" .RelPermalink) }}">See the photos</a>
+          {{- end }}
+          <a class="btn btn-outline-secondary" href="{{ .RelPermalink }}">Full reunion details</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  {{- end }}
+
+  {{- /* 3. Family-history preview. */ -}}
+  <section class="home-section py-5 border-top" aria-labelledby="home-history-h">
+    <h2 id="home-history-h" class="h3 mb-3">Family history</h2>
+    {{- with site.GetPage "/history" }}
+      <div class="text-secondary">{{ .Summary }}</div>
+      <p class="mt-2 mb-0"><a href="{{ .RelPermalink }}">Explore our history</a></p>
+    {{- else }}
+      <p class="text-secondary mb-0">Our story begins with Rev. Julius Mullins (b. 1889). The family-history section is coming soon.</p>
+    {{- end }}
+  </section>
+
+  {{- /* 4. Latest news. */ -}}
+  <section class="home-section py-5 border-top" aria-labelledby="home-news-h">
+    <h2 id="home-news-h" class="h3 mb-3">Latest news</h2>
+    {{- $news := site.GetPage "/news" }}
+    {{- with $news }}
+      {{- $items := first 3 (.RegularPages.ByDate.Reverse) }}
+      {{- with $items }}
+        <ul class="list-unstyled mb-3">
+          {{- range . }}
+          <li class="mb-3">
+            <a class="fw-semibold" href="{{ .RelPermalink }}">{{ .Title }}</a>
+            <span class="d-block small text-secondary">{{ .Date.Format "January 2, 2006" }}</span>
+          </li>
+          {{- end }}
+        </ul>
+        <p class="mb-0"><a href="{{ .RelPermalink }}">All news</a></p>
+      {{- else }}
+        <p class="text-secondary mb-0">No news yet — check back soon.</p>
+      {{- end }}
+    {{- else }}
+      <p class="text-secondary mb-0">Family announcements and milestones will appear here (News section, Phase 4).</p>
+    {{- end }}
+  </section>
+
+  {{- /* 5. Recent-activity stream — recent-activity.html lands in task 2.4. */ -}}
+  <section class="home-section py-5 border-top" aria-labelledby="home-activity-h">
+    <h2 id="home-activity-h" class="h3 mb-3">Community pulse</h2>
+    {{- if templates.Exists "partials/recent-activity.html" }}
+      {{ partial "recent-activity.html" . }}
+    {{- else }}
+      <p class="text-secondary mb-0">Recent comments and updates from the family will stream here (Phase 2).</p>
+    {{- end }}
+  </section>
+
+  {{- /* 6. Email + donate CTAs — email-signup (Phase 5) and donate (task 2.6). */ -}}
+  <section class="home-section py-5 border-top" aria-labelledby="home-cta-h">
+    <h2 id="home-cta-h" class="h3 mb-4">Stay connected</h2>
+    <div class="row g-4">
+      <div class="col-md-6">
+        {{- if templates.Exists "partials/email-signup.html" }}
+          {{ partial "email-signup.html" . }}
+        {{- else }}
+          <h3 class="h5">Join the email list</h3>
+          <p class="text-secondary mb-0">Sign up to get reunion updates by email (MailerLite, Phase 5).</p>
+        {{- end }}
+      </div>
+      <div class="col-md-6">
+        {{- if templates.Exists "partials/donate.html" }}
+          {{ partial "donate.html" . }}
+        {{- else }}
+          <h3 class="h5">Support the reunion</h3>
+          <p class="text-secondary mb-0">Ways to give will appear here (Phase 2).</p>
+        {{- end }}
+      </div>
+    </div>
+  </section>
+
+</div>
 {{ end }}
