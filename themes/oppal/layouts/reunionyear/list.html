@@ -75,10 +75,10 @@
         {{- end }}
       </section>
 
-      {{- /* 9. Comments — Hyvor Talk partial slots in here in Phase 2 */ -}}
+      {{- /* 9. Comments (per reunion landing; degrades when no comments ID set). */ -}}
       <section id="comments" class="reunion-section mb-5" aria-labelledby="comments-h">
         <h2 id="comments-h">Comments</h2>
-        <p class="text-secondary">Comments load here (Hyvor Talk, Phase 2).</p>
+        {{ partial "comments.html" . }}
       </section>
 
       {{- /* 10. Contact / help */ -}}

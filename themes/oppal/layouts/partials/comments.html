@@ -1,0 +1,28 @@
+{{- /* themes/oppal/layouts/partials/comments.html — page comment thread.
+
+       Named by FUNCTION, not vendor: this is the "comments" partial regardless of
+       which service backs it, so swapping the provider never renames the partial
+       or its param (`commentsId`). It is currently implemented with Cusdis.
+
+       The service ID comes from hugo.toml params (never hardcoded) — this is the
+       partial that keeps a raw third-party <script> out of content files
+       (guardrail §6). One thread per page; `data-page-id` is the page's permalink
+       so each reunion page keeps its own conversation. Cusdis (the current backer)
+       is a lightweight (~5KB), privacy-first, open-source Disqus alternative on its
+       free hosted tier (cusdis.com): commenters enter a name (email optional),
+       there is no account-based login, and new comments are held until a moderator
+       approves them (email quick-approve link). The embed script is loaded
+       async/defer so it never blocks render. Degrades gracefully: with no ID set
+       yet, a quiet placeholder shows instead of a broken widget. */ -}}
+{{- with site.Params.commentsId }}
+<div id="cusdis_thread"
+  data-host="https://cusdis.com"
+  data-app-id="{{ . }}"
+  data-page-id="{{ $.RelPermalink }}"
+  data-page-url="{{ $.Permalink }}"
+  data-page-title="{{ $.Title }}">
+</div>
+<script async defer src="https://cusdis.com/js/cusdis.es.js"></script>
+{{- else }}
+<p class="text-secondary mb-0">Comments will be enabled here soon.</p>
+{{- end }}

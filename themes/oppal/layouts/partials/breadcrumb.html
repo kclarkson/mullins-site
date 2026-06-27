@@ -1,0 +1,21 @@
+{{- /* themes/oppal/layouts/partials/breadcrumb.html — auto breadcrumb trail.
+
+       Walks the page's ancestors (parent → … → home) using Hugo's .Ancestors, so
+       no manual config is needed — adapted from the Noorix recursive pattern, but
+       using .Ancestors instead of hand-rolled recursion. Renders nothing on the
+       home page. The current page is the non-link, aria-current crumb. Included
+       site-wide from baseof for every non-home page. Structure only. */ -}}
+{{- if not .IsHome }}
+<nav class="breadcrumb-nav border-bottom" aria-label="Breadcrumb">
+  <div class="container">
+    <ol class="breadcrumb mb-0 py-2">
+      {{- range .Ancestors.Reverse }}
+      <li class="breadcrumb-item">
+        <a href="{{ .RelPermalink }}">{{ if .IsHome }}Home{{ else }}{{ .LinkTitle }}{{ end }}</a>
+      </li>
+      {{- end }}
+      <li class="breadcrumb-item active" aria-current="page">{{ .LinkTitle }}</li>
+    </ol>
+  </div>
+</nav>
+{{- end }}

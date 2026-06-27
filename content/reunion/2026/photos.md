@@ -4,4 +4,4 @@ description: "Photo galleries from the 2026 Mullins Family Reunion."
 ---
 
 Photos will be posted here after the reunion. Community albums embed via the
-`publicalbum` shortcode (added in Phase 3).
+`album` shortcode (added in Phase 3).

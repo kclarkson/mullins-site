@@ -1,10 +1,33 @@
-{{- /* themes/oppal/layouts/partials/footer.html — footer chrome + JS pipeline. */ -}}
-<footer class="site-footer mt-auto py-4">
+{{- /* themes/oppal/layouts/partials/footer.html — footer chrome + JS pipeline.
+       Secondary actions (sitemap, donate, email signup, social icons) are sourced
+       from data/site.yaml and the main menu; each piece self-hides when empty. */ -}}
+<footer class="site-footer mt-auto pt-5 pb-4">
   <div class="container">
-    <p class="mb-0 text-secondary small">
-      &copy; {{ now.Year }} {{ site.Title }}.
-    </p>
-    {{- /* Secondary actions (Join Email List, Donate, social icons) grow in Phase 2. */ -}}
+    <div class="row g-4">
+      <div class="col-md-4">
+        <p class="fw-semibold mb-2">{{ site.Title }}</p>
+        {{- with site.Params.description }}<p class="text-secondary small">{{ . }}</p>{{ end }}
+        {{ partial "social-icons.html" . }}
+      </div>
+      <div class="col-md-4">
+        <h2 class="h6 text-uppercase">Explore</h2>
+        <ul class="list-unstyled mb-0">
+          {{- range site.Menus.main }}
+          <li class="mb-1"><a class="link-secondary" href="{{ .URL | relLangURL }}">{{ .Name }}</a></li>
+          {{- end }}
+        </ul>
+      </div>
+      <div class="col-md-4">
+        {{ partial "donate.html" . }}
+        {{- if templates.Exists "partials/email-signup.html" }}
+          <div class="mt-3">{{ partial "email-signup.html" . }}</div>
+        {{- else }}
+          <p class="mt-3 mb-0"><a class="link-secondary" href="{{ "/contact/" | relLangURL }}">Join the email list</a></p>
+        {{- end }}
+      </div>
+    </div>
+    <hr>
+    <p class="mb-0 text-secondary small">&copy; {{ now.Year }} {{ site.Title }}.</p>
   </div>
 </footer>
 

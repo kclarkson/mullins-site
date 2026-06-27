@@ -34,8 +34,10 @@ theme hardcodes a colour or font.
 > brand is locked (oppal-plan §7.1). Swapping the values in `_tokens.scss` is the
 > only change needed to rebrand.
 
-Service IDs (GA4, Hyvor Talk, MailerLite) are **not** in the theme — they live in
-the project `hugo.toml` `[params]`, empty until provided.
+Service IDs (`analyticsId`, `commentsId`, `emailFormId` — currently GA4, Cusdis,
+MailerLite) are **not** in the theme — they live in the project `hugo.toml`
+`[params]`, empty until provided. Params and partials are named by **function,
+not vendor**, so swapping a service never renames the code.
 
 ## What's built (skeleton) vs. what grows
 
@@ -56,7 +58,7 @@ shell to grow from.
 **Grows by phase** (see `site-dev/oppal-theme-build-plan.md` §4–5 and the runbook):
 reunion `single`/`list`, `featured-reunion` selection + dynamic nav label, hero,
 quick-facts, reunion subnav, history/news templates, and the `cta`, `countdown`,
-`gallery`, `publicalbum`, `timeline` shortcodes, plus the Hyvor / MailerLite /
+`gallery`, `album`, `timeline` shortcodes, plus the comments / email-signup /
 Netlify-form / analytics / schema partials.
 
 ## Local development

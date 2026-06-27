@@ -1,0 +1,30 @@
+{{- /* themes/oppal/layouts/partials/donate.html — ways to give.
+
+       Sourced from data/site.yaml (build-plan §4.6); never hardcoded. Each option
+       renders only when it has a value, so partial data won't show empty rows, and
+       the whole block renders nothing if no destinations are set. Used on the home
+       page, the footer, and (optionally) reunion pages. Structure only. */ -}}
+{{- with site.Data.site.donate }}
+{{- $hasCheck := and .check (or .check.payable_to .check.address) -}}
+{{- if or .cashapp .paypal $hasCheck }}
+<div class="donate">
+  <h3 class="h5">Support the reunion</h3>
+  <p class="text-secondary">Help cover the cost of bringing the family together.</p>
+  <ul class="list-unstyled mb-0">
+    {{- with .cashapp }}
+    <li class="mb-2"><span class="fw-semibold">CashApp:</span> {{ . }}</li>
+    {{- end }}
+    {{- with .paypal }}
+    <li class="mb-2"><span class="fw-semibold">PayPal:</span> {{ . }}</li>
+    {{- end }}
+    {{- if $hasCheck }}
+    <li class="mb-2">
+      <span class="fw-semibold">Mail a check:</span>
+      {{- with .check.payable_to }} payable to {{ . }}{{ end }}
+      {{- with .check.address }} · {{ . }}{{ end }}
+    </li>
+    {{- end }}
+  </ul>
+</div>
+{{- end }}
+{{- end }}

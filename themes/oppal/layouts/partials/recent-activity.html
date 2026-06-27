@@ -1,0 +1,28 @@
+{{- /* themes/oppal/layouts/partials/recent-activity.html — home "community pulse".
+
+       A lightweight, BUILD-TIME feed of the latest family content (news + history
+       updates) — deliberately NOT a guest book. It pulls regular pages from the
+       /news and /history sections, newest first. Family comments could join this
+       stream later via the comments service API/webhook (open decision #4). Renders a quiet note
+       when there's nothing posted yet. Structure only. */ -}}
+{{- $pages := slice -}}
+{{- range (slice "/news" "/history") -}}
+  {{- with site.GetPage . }}
+    {{- range .RegularPages }}{{ $pages = $pages | append . }}{{ end }}
+  {{- end -}}
+{{- end -}}
+{{- $pages = first 5 (sort $pages "Date" "desc") -}}
+{{- with $pages }}
+<ul class="recent-activity list-unstyled mb-0">
+  {{- range . }}
+  <li class="mb-3">
+    <a class="fw-semibold" href="{{ .RelPermalink }}">{{ .Title }}</a>
+    <span class="d-block small text-secondary">
+      {{- with .Parent.LinkTitle }}{{ . }} · {{ end }}{{ .Date.Format "January 2, 2006" }}
+    </span>
+  </li>
+  {{- end }}
+</ul>
+{{- else }}
+<p class="text-secondary mb-0">Recent family news and updates will stream here as they're posted.</p>
+{{- end }}

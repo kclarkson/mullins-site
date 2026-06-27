@@ -1,0 +1,28 @@
+# data/site.yaml — global site bits that aren't tied to a single page
+# (build-plan §4.6). Reunions are NEVER stored here; they're derived from content.
+# Read by the donate, social-icons, and footer partials. Empty values render
+# nothing, so partials degrade gracefully until real data is supplied.
+
+org:
+  name: "Mullins Family Reunion"
+  organizer: "Darryl Mullins"
+  location: "Raleigh, NC"
+  # The contact email was Cloudflare-obfuscated on the legacy site and not
+  # recovered. Add it here, or rely on the Netlify contact form (Phase 5).
+  email: ""
+
+# Ways to give (rendered by partials/donate.html). Only entries with a value show.
+# CONFIRM these are current before launch — runbook 2.6 / open decision #6.
+donate:
+  cashapp: "$MullinsReunion"
+  paypal: ""              # PayPal address was obfuscated on the legacy site — add before launch
+  check:
+    payable_to: "Darryl Mullins"
+    address: "1045 Newburgh Circle, Raleigh, NC 27603"
+
+# Social links (rendered by partials/social-icons.html). None were published on the
+# legacy site; fill a url in and that link appears automatically.
+social:
+  - { name: "Facebook",  url: "" }
+  - { name: "Instagram", url: "" }
+  - { name: "YouTube",   url: "" }

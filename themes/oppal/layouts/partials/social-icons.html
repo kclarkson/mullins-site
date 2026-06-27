@@ -1,0 +1,16 @@
+{{- /* themes/oppal/layouts/partials/social-icons.html — footer/secondary social links.
+
+       Sourced from data/site.yaml; only entries with a non-empty url render, so the
+       block stays hidden until the family supplies links. Each link is labelled and
+       opens in a new tab with rel="noopener". The `.social-link` hook lets the brand
+       pass drop in real icons later. Structure only. */ -}}
+{{- $links := where (default (slice) site.Data.site.social) "url" "!=" "" -}}
+{{- with $links }}
+<ul class="social-icons list-inline mb-0" aria-label="Social media">
+  {{- range . }}
+  <li class="list-inline-item">
+    <a class="social-link" href="{{ .url }}" rel="noopener" target="_blank">{{ .name }}</a>
+  </li>
+  {{- end }}
+</ul>
+{{- end }}

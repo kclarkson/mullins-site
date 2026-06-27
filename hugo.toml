@@ -28,10 +28,12 @@ buildFuture = true
 [params]
   description = 'The home of the Mullins Family Reunion — history, news, and the next gathering.'
   # Service IDs — collected once and set here (or in Netlify env). Empty until
-  # provided; the partials that use them are wired in later phases.
-  ga4 = ''                # GA4 measurement ID (G-XXXXXXX) — Phase 5
-  hyvorWebsiteId = ''     # Hyvor Talk website ID — Phase 2
-  mailerliteFormId = ''   # MailerLite embedded form ID — Phase 5
+  # provided; the partials that use them are wired in later phases. Params are
+  # named by FUNCTION, not vendor, so swapping a service never renames the param;
+  # the comment notes which tech currently fills each role.
+  analyticsId = ''        # analytics measurement ID (currently GA4, G-XXXXXXX) — Phase 5
+  commentsId = ''         # comments service ID (currently Cusdis App ID, cusdis.com) — Phase 2
+  emailFormId = ''        # email signup form ID (currently MailerLite) — Phase 5
 
 # Global navigation. Flat per the structure doc. The dynamic "[year] Reunion"
 # item is added in Phase 1 from the featured-reunion logic, not as a static entry.
