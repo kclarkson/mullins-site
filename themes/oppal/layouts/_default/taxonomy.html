@@ -1,0 +1,23 @@
+{{- /* Taxonomy term pages (tags/categories), e.g. if news uses them in Phase 4.
+       Migrated from the root stub; Bootstrap-wrapped to match list.html. */ -}}
+{{ define "main" }}
+<section class="py-5">
+  <div class="container">
+    <header class="mb-4">
+      <h1>{{ .Title }}</h1>
+    </header>
+    {{ with .Pages }}
+    <ul class="list-unstyled">
+      {{ range . }}
+      <li class="mb-2">
+        <a class="link-dark" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        {{ with .Date }}<span class="text-secondary small ms-2">{{ .Format "Jan 2, 2006" }}</span>{{ end }}
+      </li>
+      {{ end }}
+    </ul>
+    {{ else }}
+    <p class="text-secondary">Nothing here yet.</p>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

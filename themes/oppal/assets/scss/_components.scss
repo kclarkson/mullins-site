@@ -1,0 +1,22 @@
+// _components.scss — custom component styles for the oppal theme.
+//
+// Imported AFTER Bootstrap, so Bootstrap's variables ($light, $zindex-*, …),
+// maps, and mixins are all available here. This file grows alongside the
+// partials: hero, quick-facts bar, reunion cards, and the reunion subnav.
+
+// Skip-to-content link. Bootstrap's .visually-hidden-focusable handles the
+// show-on-focus behaviour; this just positions it above the page chrome.
+.skip-link {
+  position: absolute;
+  top: .5rem;
+  left: .5rem;
+  z-index: $zindex-tooltip;
+  padding: .5rem .75rem;
+  background-color: $body-bg;
+  border-radius: $border-radius;
+}
+
+// Footer chrome.
+.site-footer {
+  background-color: $light;
+}

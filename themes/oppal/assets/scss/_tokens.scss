@@ -1,0 +1,27 @@
+// _tokens.scss — brand tokens for the oppal theme.
+//
+// These override Bootstrap's own Sass variables, so this file MUST be imported
+// BEFORE Bootstrap in main.scss. This is the payoff of the SCSS route over a CDN:
+// brand decisions flow into Bootstrap's components, not just bolted on after.
+//
+// PLACEHOLDER PALETTE. The real Mullins palette + fonts are an open brand
+// decision (build-plan §10.6 / oppal-plan §7.1). Swap these values when the
+// brand is locked — nothing else in the theme hardcodes a colour or font.
+
+// --- Colour ------------------------------------------------------------------
+$primary:    #2f5d50; // placeholder evergreen
+$secondary:  #6c757d;
+$body-color: #1f2933;
+$body-bg:    #ffffff;
+
+// --- Typography --------------------------------------------------------------
+// System stack placeholder until the project's display/body fonts are wired
+// (the project sets fonts in project.md; the skeleton stays dependency-free).
+$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto,
+  "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+  "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+// --- Shape & links -----------------------------------------------------------
+$border-radius:         .5rem;
+$link-decoration:       none;
+$link-hover-decoration: underline;

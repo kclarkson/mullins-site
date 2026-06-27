@@ -1,0 +1,15 @@
+{{- /* themes/oppal/layouts/_default/baseof.html — base shell for every page. */ -}}
+<!DOCTYPE html>
+<html lang="{{ or site.Language.Locale site.Language.Lang "en" }}">
+<head>
+  {{ partial "head.html" . }}
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <a class="skip-link visually-hidden-focusable" href="#main">Skip to content</a>
+  {{ partial "header.html" . }}
+  <main id="main">
+    {{ block "main" . }}{{ end }}
+  </main>
+  {{ partial "footer.html" . }}
+</body>
+</html>

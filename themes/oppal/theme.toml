@@ -1,0 +1,11 @@
+# oppal — theme metadata
+name = "oppal"
+license = "MIT"
+description = "Self-contained Bootstrap 5 theme for the Mullins Family Reunion site. Bootstrap ships via npm + an SCSS pipeline (Hugo Pipes), not CDN."
+homepage = "https://github.com/"
+min_version = "0.163.3"
+tags = ["bootstrap", "scss", "family", "events"]
+features = ["bootstrap-5", "scss-pipeline", "tinacms", "netlify"]
+
+[author]
+  name = "site-builder Hugo developer"

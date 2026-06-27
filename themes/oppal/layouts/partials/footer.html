@@ -1,0 +1,20 @@
+{{- /* themes/oppal/layouts/partials/footer.html — footer chrome + JS pipeline. */ -}}
+<footer class="site-footer mt-auto py-4">
+  <div class="container">
+    <p class="mb-0 text-secondary small">
+      &copy; {{ now.Year }} {{ site.Title }}.
+    </p>
+    {{- /* Secondary actions (Join Email List, Donate, social icons) grow in Phase 2. */ -}}
+  </div>
+</footer>
+
+{{- /* JS: Bootstrap's bundle (includes Popper) + our theme JS, concatenated into
+       one deferred, fingerprinted file. */ -}}
+{{- $scripts := slice }}
+{{- with resources.Get "js/bootstrap.bundle.min.js" }}{{ $scripts = $scripts | append . }}{{ end }}
+{{- with resources.Get "js/main.js" }}{{ $scripts = $scripts | append . }}{{ end }}
+{{- with $scripts }}
+  {{- $bundle := . | resources.Concat "js/bundle.js" }}
+  {{- if hugo.IsProduction }}{{ $bundle = $bundle | minify | fingerprint "sha384" }}{{ end }}
+  <script src="{{ $bundle.RelPermalink }}"{{ with $bundle.Data.Integrity }} integrity="{{ . }}" crossorigin="anonymous"{{ end }} defer></script>
+{{- end }}

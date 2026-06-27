@@ -1,0 +1,36 @@
+{{- /* themes/oppal/layouts/partials/head.html — document head. */ -}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{{- /* Title: bare site title on the home page, "Page | Site" elsewhere. */ -}}
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
+
+{{- with or .Description .Summary site.Params.description }}
+<meta name="description" content="{{ . | plainify | chomp | truncate 155 }}">
+{{- end }}
+
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{- /* Favicon. An .ico fallback can be added in static/ later (see README). */ -}}
+<link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
+
+{{- /* Open Graph + Twitter cards via Hugo's internal templates (brand-overridable later). */ -}}
+{{ template "_internal/opengraph.html" . }}
+{{ template "_internal/twitter_cards.html" . }}
+
+{{- /* Stylesheet: brand tokens + Bootstrap 5, compiled with Hugo's bundled
+       libsass (Bootstrap 5.3 uses @import only — no Sass modules — so libsass
+       handles it, and it ships inside Hugo Extended with no external Sass
+       dependency). One file, fingerprinted in production for cache-busting. */ -}}
+{{- $sassOpts := dict
+      "targetPath" "css/main.css"
+      "enableSourceMap" (not hugo.IsProduction)
+      "outputStyle" (cond hugo.IsProduction "compressed" "expanded")
+}}
+{{- with resources.Get "scss/main.scss" }}
+  {{- $css := . | css.Sass $sassOpts }}
+  {{- if hugo.IsProduction }}{{ $css = $css | fingerprint "sha384" }}{{ end }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}"{{ with $css.Data.Integrity }} integrity="{{ . }}" crossorigin="anonymous"{{ end }}>
+{{- end }}
+
+{{- /* analytics partial (GA4) is wired in Phase 5; placeholder until then. */ -}}

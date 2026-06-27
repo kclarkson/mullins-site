@@ -1,0 +1,13 @@
+{
+  "name": "mullins-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mullins Family Reunion website — Hugo + oppal theme (Bootstrap 5 via SCSS).",
+  "scripts": {
+    "dev": "hugo server -D",
+    "build": "hugo --gc --minify"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.8"
+  }
+}

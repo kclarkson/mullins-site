@@ -1,0 +1,19 @@
+{{- /* Generic single page (contact, simple pages). Reunion/history/news get
+       their own section single templates in later phases. */ -}}
+{{ define "main" }}
+<article class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <header class="mb-4">
+          <h1>{{ .Title }}</h1>
+          {{ with .Description }}<p class="lead text-secondary">{{ . }}</p>{{ end }}
+        </header>
+        <div class="content">
+          {{ .Content }}
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+{{ end }}

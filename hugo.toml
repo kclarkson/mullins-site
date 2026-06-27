@@ -1,3 +1,51 @@
 baseURL = 'https://mullins-site.netlify.app/'
 locale = 'en-us'
 title = 'Mullins Family Reunion'
+theme = 'oppal'
+
+# Hugo module mounts. We add custom mounts to expose Bootstrap (installed via npm)
+# to Hugo's asset pipeline. Defining an `assets` mount replaces Hugo's default
+# `assets` mount, so we re-add the project's own assets/ here; content, data,
+# layouts, archetypes, and static keep their defaults.
+[module]
+  [[module.mounts]]
+    source = 'assets'
+    target = 'assets'
+  [[module.mounts]]
+    source = 'node_modules/bootstrap/scss'
+    target = 'assets/scss/bootstrap'   # lets main.scss @import "bootstrap/bootstrap"
+  [[module.mounts]]
+    source = 'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
+    target = 'assets/js/bootstrap.bundle.min.js'
+
+[params]
+  description = 'The home of the Mullins Family Reunion — history, news, and the next gathering.'
+  # Service IDs — collected once and set here (or in Netlify env). Empty until
+  # provided; the partials that use them are wired in later phases.
+  ga4 = ''                # GA4 measurement ID (G-XXXXXXX) — Phase 5
+  hyvorWebsiteId = ''     # Hyvor Talk website ID — Phase 2
+  mailerliteFormId = ''   # MailerLite embedded form ID — Phase 5
+
+# Global navigation. Flat per the structure doc. The dynamic "[year] Reunion"
+# item is added in Phase 1 from the featured-reunion logic, not as a static entry.
+[menus]
+  [[menus.main]]
+    name = 'Home'
+    pageRef = '/'
+    weight = 10
+  [[menus.main]]
+    name = 'History'
+    url = '/history/'
+    weight = 20
+  [[menus.main]]
+    name = 'Past Reunions'
+    url = '/reunion/'
+    weight = 40
+  [[menus.main]]
+    name = 'News'
+    url = '/news/'
+    weight = 50
+  [[menus.main]]
+    name = 'Contact'
+    url = '/contact/'
+    weight = 60

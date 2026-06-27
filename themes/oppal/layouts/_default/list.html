@@ -1,0 +1,30 @@
+{{- /* Generic section list fallback. Reunion "Past Reunions", history, and news
+       lists get purpose-built templates in later phases. */ -}}
+{{ define "main" }}
+<section class="py-5">
+  <div class="container">
+    <header class="mb-4">
+      <h1>{{ .Title }}</h1>
+      {{ with .Content }}<div class="lead">{{ . }}</div>{{ end }}
+    </header>
+    {{ with .Pages }}
+    <div class="row g-4">
+      {{ range . }}
+      <div class="col-sm-6 col-lg-4">
+        <article class="card h-100">
+          <div class="card-body">
+            <h2 class="h5 card-title">
+              <a class="stretched-link link-dark" href="{{ .RelPermalink }}">{{ .Title }}</a>
+            </h2>
+            {{ with .Description }}<p class="card-text text-secondary mb-0">{{ . }}</p>{{ end }}
+          </div>
+        </article>
+      </div>
+      {{ end }}
+    </div>
+    {{ else }}
+    <p class="text-secondary">Nothing here yet.</p>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

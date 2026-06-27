@@ -1,0 +1,19 @@
+// main.scss — single SCSS entry point for the oppal theme.
+//
+// Order matters. Our tokens override Bootstrap's variables, so they come first;
+// Bootstrap is imported next; our component styles last so they can use
+// Bootstrap's variables, maps, and mixins.
+//
+// Compiled by Hugo Pipes with Dart Sass (see partials/head.html) into one
+// fingerprinted stylesheet.
+
+// 1. Brand tokens / Bootstrap variable overrides (must precede Bootstrap).
+@import "tokens";
+
+// 2. Bootstrap 5 — full import for now. Cherry-pick components later if CSS
+//    weight climbs past the performance budget (oppal-plan §3, §6).
+@import "bootstrap/bootstrap";
+
+// 3. Our component styles (hero, quick-facts, cards, subnav — grow with the
+//    partials over the build phases).
+@import "components";

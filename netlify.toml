@@ -5,6 +5,17 @@
 [build.environment]
   HUGO_VERSION = "0.163.3"
   HUGO_ENV = "production"
+  # Node is needed so Netlify runs `npm install` (Bootstrap) before Hugo builds.
+  NODE_VERSION = "20"
 
+# Deploy previews and branch deploys build against their own URL so canonical
+# links and absolute URLs resolve correctly in previews vs. production (runbook 0.8).
+[context.deploy-preview]
+  command = "hugo --gc --minify -b $DEPLOY_PRIME_URL"
 [context.deploy-preview.environment]
+  HUGO_ENV = "preview"
+
+[context.branch-deploy]
+  command = "hugo --gc --minify -b $DEPLOY_PRIME_URL"
+[context.branch-deploy.environment]
   HUGO_ENV = "preview"

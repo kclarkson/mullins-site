@@ -1,0 +1,29 @@
+{{- /* themes/oppal/layouts/partials/nav.html — global Bootstrap navbar.
+       Flat, mobile-collapsing, active-state aware, data-driven from site menus.
+       The dynamic "[year] Reunion" item is inserted in Phase 1 via the
+       featured-reunion selection logic. */ -}}
+<nav class="navbar navbar-expand-lg bg-body" aria-label="Main navigation">
+  <div class="container">
+    <a class="navbar-brand fw-semibold" href="{{ "" | relLangURL }}">{{ site.Title }}</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#mainNav" aria-controls="mainNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        {{- range site.Menus.main }}
+          {{- $active := or ($.IsMenuCurrent "main" .) ($.HasMenuCurrent "main" .) }}
+          {{- if and (not $active) .URL (ne .URL "/") }}
+            {{- $active = hasPrefix $.RelPermalink (.URL | relLangURL) }}
+          {{- end }}
+          <li class="nav-item">
+            <a class="nav-link{{ if $active }} active{{ end }}"
+               {{ if $active }}aria-current="page"{{ end }}
+               href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+          </li>
+        {{- end }}
+      </ul>
+    </div>
+  </div>
+</nav>
