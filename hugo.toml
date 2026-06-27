@@ -3,6 +3,13 @@ locale = 'en-us'
 title = 'Mullins Family Reunion'
 theme = 'oppal'
 
+# REQUIRED: reunion pages are future-dated by design (an upcoming reunion's date
+# is in the future), and the whole site is built to feature that upcoming reunion.
+# Hugo hides future-dated content by default, which would drop the upcoming
+# reunion entirely — so we publish future content. Past reunions have no
+# expirydate, so they stay published normally.
+buildFuture = true
+
 # Hugo module mounts. We add custom mounts to expose Bootstrap (installed via npm)
 # to Hugo's asset pipeline. Defining an `assets` mount replaces Hugo's default
 # `assets` mount, so we re-add the project's own assets/ here; content, data,

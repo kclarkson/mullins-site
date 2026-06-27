@@ -1,0 +1,19 @@
+{{- /* themes/oppal/layouts/partials/schedule.html — schedule preview block.
+
+       Context: the reunion Page. Reads the `schedule` front-matter array (each row:
+       day, time, title, location). Renders nothing if the array is empty, so the
+       section can be omitted cleanly. Structure only. */ -}}
+{{- with .Params.schedule }}
+<div class="schedule">
+  <ul class="list-unstyled mb-0">
+    {{- range . }}
+    <li class="schedule-item py-2 border-bottom">
+      <span class="schedule-day fw-semibold">{{ .day }}</span>
+      {{- with .time }} <span class="schedule-time">· {{ . }}</span>{{ end }}
+      <span class="schedule-title d-block">{{ .title }}</span>
+      {{- with .location }}<span class="schedule-location d-block small text-secondary">{{ . }}</span>{{ end }}
+    </li>
+    {{- end }}
+  </ul>
+</div>
+{{- end }}

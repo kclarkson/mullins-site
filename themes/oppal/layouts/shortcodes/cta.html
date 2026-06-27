@@ -1,0 +1,18 @@
+{{- /* themes/oppal/layouts/shortcodes/cta.html — reusable call-to-action button.
+
+       Lets family editors drop a button into Markdown without touching templates.
+       Call it as a cta shortcode with label and url params, e.g.
+       label="Register now" url="/reunion/2026/register/" and an optional
+       style="outline".
+
+       Params: label (required), url (required), style ("primary" default, or
+       "outline" / "secondary"). Structure only. */ -}}
+{{- $label := .Get "label" -}}
+{{- $url := .Get "url" -}}
+{{- $style := .Get "style" | default "primary" -}}
+{{- $class := cond (eq $style "outline") "btn btn-outline-secondary" (printf "btn btn-%s" $style) -}}
+{{- if and $label $url -}}
+<a class="{{ $class }} cta" href="{{ $url | relLangURL }}">{{ $label }}</a>
+{{- else -}}
+{{- warnf "cta shortcode in %s needs both label and url" .Page.Path -}}
+{{- end -}}

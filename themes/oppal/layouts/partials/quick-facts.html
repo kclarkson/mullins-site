@@ -1,0 +1,40 @@
+{{- /* themes/oppal/layouts/partials/quick-facts.html — quick-facts bar.
+
+       Context: the reunion Page. Reads structured front matter only; each fact is
+       rendered just when present, so partial reunions don't show empty cells.
+       Structure only. */ -}}
+{{- $p := . -}}
+<section class="quick-facts border-top border-bottom py-3" aria-label="Reunion quick facts">
+  <div class="container">
+    <dl class="row mb-0">
+      <div class="col-6 col-md">
+        <dt class="small text-uppercase">Starts</dt>
+        <dd class="mb-0">{{ $p.Date.Format "Mon, Jan 2, 2006" }}</dd>
+      </div>
+      {{- with $p.Params.end_date }}
+      <div class="col-6 col-md">
+        <dt class="small text-uppercase">Ends</dt>
+        <dd class="mb-0">{{ (time .).Format "Mon, Jan 2, 2006" }}</dd>
+      </div>
+      {{- end }}
+      {{- with $p.Params.city }}
+      <div class="col-6 col-md">
+        <dt class="small text-uppercase">Location</dt>
+        <dd class="mb-0">{{ . }}</dd>
+      </div>
+      {{- end }}
+      {{- with (or $p.Params.venue $p.Params.hotel) }}
+      <div class="col-6 col-md">
+        <dt class="small text-uppercase">Venue / Hotel</dt>
+        <dd class="mb-0">{{ . }}</dd>
+      </div>
+      {{- end }}
+      {{- with $p.Params.register_deadline }}
+      <div class="col-6 col-md">
+        <dt class="small text-uppercase">Register by</dt>
+        <dd class="mb-0">{{ (time .).Format "Jan 2, 2006" }}</dd>
+      </div>
+      {{- end }}
+    </dl>
+  </div>
+</section>

@@ -1,0 +1,18 @@
+{{- /* themes/oppal/layouts/shortcodes/countdown.html — live countdown timer.
+
+       The one allowed client-side exception: a ticking "N days until …" counter.
+       It only renders a target element; assets/js/main.js reads the data-countdown
+       attribute and updates it. Build-time logic still decides whether to include
+       the shortcode (hidden in gap mode via the hero).
+
+       Usage inside a reunion page: call the countdown shortcode with no params to
+       use the page's own front-matter date, or pass date="2028-06-16" and
+       label="until Reunion 2028" to override.
+
+       Params: date (optional, falls back to the page's front-matter date),
+       label (optional suffix text). Structure only. */ -}}
+{{- $date := .Get "date" -}}
+{{- $target := "" -}}
+{{- with $date }}{{ $target = (time .).Format "2006-01-02T15:04:05Z07:00" }}{{ else }}{{ $target = .Page.Date.Format "2006-01-02T15:04:05Z07:00" }}{{ end -}}
+{{- $label := .Get "label" | default "until the reunion" -}}
+<div class="countdown" data-countdown="{{ $target }}" data-countdown-label="{{ $label }}" aria-live="polite"></div>

@@ -1,0 +1,48 @@
+{{- /* themes/oppal/layouts/partials/hero.html — reunion / home hero.
+
+       Context: a dict
+         .page        -> the reunion Page to feature
+         .isUpcoming  -> bool (from featured-reunion). Switches the wording:
+                          upcoming  => dates + Register CTA + countdown
+                          gap mode  => "Most Recent Reunion" + photos CTA, no countdown
+
+       Structure only — no design decisions baked in. Bootstrap utility classes
+       give it shape; the real look comes with the brand pass. */ -}}
+{{- $page := .page -}}
+{{- $isUpcoming := .isUpcoming -}}
+{{- with $page }}
+<section class="reunion-hero py-5" aria-labelledby="hero-title">
+  <div class="container">
+    <p class="hero-eyebrow text-uppercase mb-2">
+      {{ if $isUpcoming }}Upcoming Reunion{{ else }}Most Recent Reunion{{ end }}
+    </p>
+    <h1 id="hero-title" class="hero-title mb-2">{{ .Title }}</h1>
+
+    {{- with .Params.theme }}<p class="hero-theme lead mb-3">{{ . }}</p>{{ end }}
+
+    <p class="hero-meta mb-4">
+      {{- $start := .Date -}}
+      {{- $end := .Params.end_date -}}
+      <span class="hero-dates">
+        {{ $start.Format "January 2" }}{{ with $end }}–{{ (time .).Format "January 2, 2006" }}{{ else }}{{ $start.Format ", 2006" }}{{ end }}
+      </span>
+      {{- with .Params.city }}<span class="hero-city"> · {{ . }}</span>{{ end }}
+    </p>
+
+    <div class="hero-actions d-flex flex-wrap gap-2">
+      {{- if $isUpcoming }}
+        <a class="btn btn-primary" href="{{ (.GetPage "register").RelPermalink | default (printf "%sregister/" .RelPermalink) }}">Register</a>
+        <a class="btn btn-outline-secondary" href="{{ .RelPermalink }}">Reunion details</a>
+      {{- else }}
+        <a class="btn btn-primary" href="{{ (.GetPage "photos").RelPermalink | default (printf "%sphotos/" .RelPermalink) }}">Relive the memories</a>
+        <a class="btn btn-outline-secondary" href="{{ .RelPermalink }}">Reunion details</a>
+      {{- end }}
+    </div>
+
+    {{- /* Live countdown is the one client-side exception; hidden in gap mode. */ -}}
+    {{- if $isUpcoming }}
+      <div class="hero-countdown mt-4" data-countdown="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}" aria-live="polite"></div>
+    {{- end }}
+  </div>
+</section>
+{{- end }}

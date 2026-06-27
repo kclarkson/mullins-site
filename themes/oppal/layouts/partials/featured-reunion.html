@@ -1,0 +1,46 @@
+{{- /* themes/oppal/layouts/partials/featured-reunion.html
+
+       Build-time reunion selection (build-plan §5). Picks the reunion to feature
+       site-wide WITHOUT any manual `upcoming` flag or separate data file: it reads
+       the dates already in each reunion page's front matter and decides at build
+       time.
+
+       Rule:
+         - prefer the SOONEST reunion whose date is today or later (the one that's
+           actually next), then
+         - if none is upcoming, fall back to the MOST RECENT past reunion so the
+           hero/nav are never blank (the "gap between cycles", §5a).
+
+       Returns (via `return`) a dict the caller can use:
+         .featured    -> the chosen reunion Page (or nil if no reunion pages exist)
+         .isUpcoming  -> bool: is the featured reunion today-or-future?
+
+       Usage:
+         {{- $sel := partial "featured-reunion.html" . }}
+         {{- with $sel.featured }} ... {{ $sel.isUpcoming }} ... {{ end }}
+
+       Selection logic must run at build time (not in the browser) so crawlers and
+       AI engines see the right label/CTA in the served HTML. The only client-side
+       piece is the countdown shortcode. */ -}}
+
+{{- /* Reunion YEARS are the child sections of /reunion/ (each year's _index.md).
+       Sourcing from .Sections (not site.RegularPages) keeps subpages like
+       register/ and schedule/ out of the selection. */ -}}
+{{- $years := slice -}}
+{{- with site.GetPage "/reunion" }}{{ $years = .Sections }}{{ end -}}
+{{- $all := sort $years "Date" "asc" -}}
+{{- $future := where $all "Date" "ge" now -}}
+
+{{- $featured := false -}}
+{{- if gt (len $future) 0 -}}
+  {{- /* soonest upcoming reunion */ -}}
+  {{- $featured = index $future 0 -}}
+{{- else if gt (len $all) 0 -}}
+  {{- /* gap mode: most recent past reunion (highest date) */ -}}
+  {{- $featured = index (last 1 $all) 0 -}}
+{{- end -}}
+
+{{- $isUpcoming := false -}}
+{{- with $featured }}{{ $isUpcoming = ge .Date now }}{{ end -}}
+
+{{- return (dict "featured" $featured "isUpcoming" $isUpcoming) -}}

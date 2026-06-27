@@ -1,7 +1,28 @@
 {{- /* themes/oppal/layouts/partials/nav.html — global Bootstrap navbar.
-       Flat, mobile-collapsing, active-state aware, data-driven from site menus.
-       The dynamic "[year] Reunion" item is inserted in Phase 1 via the
-       featured-reunion selection logic. */ -}}
+       Flat, mobile-collapsing, active-state aware.
+
+       The static items come from site.Menus.main; the dynamic "[year] Reunion"
+       item is injected here from the build-time featured-reunion selection (§5)
+       and slotted at weight 30 (between History @20 and Past Reunions @40). In
+       gap mode the label reads "Latest Reunion" (§5a). To avoid relying on a
+       read-only menu, we flatten everything into one weighted list, add the
+       dynamic entry, sort, then render. */ -}}
+
+{{- /* Build the combined, weighted item list. */ -}}
+{{- $items := slice -}}
+{{- range site.Menus.main -}}
+  {{- $items = $items | append (dict "name" .Name "url" (.URL | relLangURL) "weight" .Weight) -}}
+{{- end -}}
+
+{{- /* Inject the dynamic reunion item from the featured selection. */ -}}
+{{- $sel := partial "featured-reunion.html" . -}}
+{{- with $sel.featured -}}
+  {{- $label := cond $sel.isUpcoming (printf "%s Reunion" (.Date.Format "2006")) "Latest Reunion" -}}
+  {{- $items = $items | append (dict "name" $label "url" .RelPermalink "weight" 30) -}}
+{{- end -}}
+
+{{- $items = sort $items "weight" "asc" -}}
+
 <nav class="navbar navbar-expand-lg bg-body" aria-label="Main navigation">
   <div class="container">
     <a class="navbar-brand fw-semibold" href="{{ "" | relLangURL }}">{{ site.Title }}</a>
@@ -12,15 +33,17 @@
     </button>
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        {{- range site.Menus.main }}
-          {{- $active := or ($.IsMenuCurrent "main" .) ($.HasMenuCurrent "main" .) }}
-          {{- if and (not $active) .URL (ne .URL "/") }}
-            {{- $active = hasPrefix $.RelPermalink (.URL | relLangURL) }}
+        {{- range $items }}
+          {{- $active := false }}
+          {{- if eq .url ("/" | relLangURL) }}
+            {{- $active = $.IsHome }}
+          {{- else }}
+            {{- $active = hasPrefix $.RelPermalink .url }}
           {{- end }}
           <li class="nav-item">
             <a class="nav-link{{ if $active }} active{{ end }}"
                {{ if $active }}aria-current="page"{{ end }}
-               href="{{ .URL | relLangURL }}">{{ .Name }}</a>
+               href="{{ .url }}">{{ .name }}</a>
           </li>
         {{- end }}
       </ul>
