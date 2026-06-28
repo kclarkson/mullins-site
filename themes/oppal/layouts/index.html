@@ -1,24 +1,14 @@
-{{- /* themes/oppal/layouts/index.html — home page (build-plan §4b home model).
+{{- /* themes/oppal/layouts/index.html — home page (mockup §F: reunion-forward mosaic).
 
-       Assembles the home sections in the fixed order:
-         1 Hero → upcoming reunion (build-time featured selection, Phase 1 logic)
-         2 Upcoming-reunion highlight (key facts + primary CTA)
-         3 Family-history preview
-         4 Latest news
-         5 Recent-activity stream ("community pulse")
-         6 Email + donate CTAs
+       Order:
+         1 Hero            → the build-time featured reunion (save-the-date / upcoming / past)
+         2 Welcome intro   → prose from content/_index.md
+         3 Mosaic grid     → brand-card tiles: history · news · from-the-family ·
+                             through-the-years · email · donate
 
-       The hero and the dynamic nav label both come from featured-reunion.html, so
-       the home page re-points itself each cycle with no manual edits (build-plan
-       §5). The `$isUpcoming` switch flips the wording between an upcoming gathering
-       and the most recent one (runbook 2.2).
-
-       Sections backed by partials that land in later Phase 2 tasks (recent-activity
-       2.4, donate 2.6) or in Phase 5 (email-signup) render a labelled placeholder
-       until then, and pick up the real partial automatically once it exists
-       (templates.Exists / site.GetPage guards) — so this layout is wired now and
-       fills in as the rest of Phase 2 lands. Structure only; the brand pass styles
-       it later. */ -}}
+       The hero re-points itself each cycle via featured-reunion.html (build-plan §5).
+       Tile content is inlined here; the email/donate/recent-activity partials get
+       wired in a later pass (the mosaic stays correct either way). */ -}}
 {{ define "main" }}
 {{- $sel := partial "featured-reunion.html" . -}}
 
@@ -27,135 +17,121 @@
   {{ partial "hero.html" (dict "page" . "isUpcoming" $sel.isUpcoming) }}
 {{- else }}
   {{- /* No reunion pages yet — keep a single h1 so the page is never headless. */ -}}
-  <section class="reunion-hero py-5" aria-labelledby="hero-title">
-    <div class="container">
+  <section class="reunion-hero reunion-hero--pattern" aria-labelledby="hero-title">
+    <div class="container reunion-hero__inner">
       <h1 id="hero-title" class="hero-title mb-2">{{ site.Title }}</h1>
       <p class="lead mb-0">{{ site.Params.description }}</p>
     </div>
   </section>
 {{- end }}
 
-{{- /* Welcome / intro prose from content/_index.md body. */ -}}
+{{- /* 2. Welcome / intro prose from content/_index.md body. */ -}}
 {{- with .Content }}
-<section class="home-intro py-5" aria-label="Welcome">
+<section class="home-intro py-5 text-center" aria-label="Welcome">
   <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-8 lead">{{ . }}</div>
-    </div>
+    <p class="eyebrow">One family · many cities · one table</p>
+    <div class="row justify-content-center"><div class="col-lg-8 lead">{{ . }}</div></div>
   </div>
 </section>
 {{- end }}
 
-<div class="container">
+{{- /* 3. Mosaic. */ -}}
+<section class="home-mosaic-wrap pb-5" aria-label="Explore the reunion">
+  <div class="container">
+    <div class="home-mosaic">
 
-  {{- /* 2. Upcoming-reunion highlight — key facts + CTA for the featured year. */ -}}
-  {{- with $sel.featured }}
-  {{- $saveDate := .Params.save_the_date -}}
-  {{- $detailsReady := and $sel.isUpcoming (not $saveDate) -}}
-  <section class="home-section py-5 border-top" aria-labelledby="home-reunion-h">
-    <h2 id="home-reunion-h" class="h3 mb-4">
-      {{ if $sel.isUpcoming }}The next gathering{{ else }}Our most recent reunion{{ end }}
-    </h2>
-    <div class="row g-4 align-items-start">
-      <div class="col-md-7">
-        <p class="h4 mb-1">{{ .Title }}</p>
-        {{- with .Params.theme }}<p class="text-secondary mb-3">{{ . }}</p>{{ end }}
-        <dl class="row mb-0">
-          <dt class="col-sm-4">{{ if $saveDate }}When{{ else }}Dates{{ end }}</dt>
-          <dd class="col-sm-8">
-            {{- if .Params.dates_exact -}}
-              {{ .Date.Format "January 2" }}{{ with .Params.end_date }}–{{ (time .).Format "January 2, 2006" }}{{ else }}{{ .Date.Format ", 2006" }}{{ end }}
-            {{- else -}}
-              {{ or .Params.dates_display (.Date.Format "2006") }}
-            {{- end -}}
-          </dd>
-          {{- with .Params.city }}<dt class="col-sm-4">Location</dt><dd class="col-sm-8">{{ . }}</dd>{{ end }}
-          {{- with (or .Params.venue .Params.hotel) }}<dt class="col-sm-4">Venue</dt><dd class="col-sm-8">{{ . }}</dd>{{ end }}
-        </dl>
-      </div>
-      <div class="col-md-5">
-        <div class="d-flex flex-column gap-2">
-          {{- if $saveDate }}
-            <a class="btn btn-primary" href="{{ "/contact/" | relLangURL }}">Join the email list</a>
-          {{- else if $detailsReady }}
-            <a class="btn btn-primary" href="{{ (.GetPage "register").RelPermalink | default (printf "%sregister/" .RelPermalink) }}">Register now</a>
+      {{- /* Who we descend from — family history. */ -}}
+      <article class="brand-card mosaic-tile mosaic-tile--media">
+        <div class="mosaic-tile__media" aria-hidden="true"></div>
+        <div class="mosaic-tile__body">
+          <p class="eyebrow">Our roots</p>
+          <h2 class="h5 mb-2">Who we descend from</h2>
+          {{- with site.GetPage "/history" }}
+            <p class="text-secondary mb-3">{{ .Summary | plainify | truncate 140 }}</p>
+            <a class="mosaic-tile__link stretched-link" href="{{ .RelPermalink }}">Read the full history →</a>
           {{- else }}
-            <a class="btn btn-primary" href="{{ (.GetPage "photos").RelPermalink | default (printf "%sphotos/" .RelPermalink) }}">See the photos</a>
+            <p class="text-secondary mb-3">Our story begins with Rev. Julius Mullins (b. 1889) of Opp, Alabama — faith, hard work, and showing up for your people.</p>
+            <span class="mosaic-tile__link">History coming soon</span>
           {{- end }}
-          <a class="btn btn-view" href="{{ .RelPermalink }}">Full reunion details</a>
         </div>
-      </div>
+      </article>
+
+      {{- /* Latest news. */ -}}
+      <article class="brand-card mosaic-tile">
+        <div class="mosaic-tile__body">
+          <p class="eyebrow">Latest news</p>
+          <h2 class="h5 mb-2">From the family desk</h2>
+          {{- with site.GetPage "/news" }}
+            {{- $items := first 3 .RegularPages.ByDate.Reverse }}
+            {{- with $items }}
+              <ul class="list-unstyled mb-3">
+                {{- range . }}
+                <li class="mb-2">
+                  <a class="fw-semibold" href="{{ .RelPermalink }}">{{ .Title }}</a>
+                  <span class="d-block small text-secondary">{{ .Date.Format "Jan 2, 2006" }}</span>
+                </li>
+                {{- end }}
+              </ul>
+              <a class="mosaic-tile__link" href="{{ .RelPermalink }}">All news →</a>
+            {{- else }}<p class="text-secondary mb-0">No news yet — check back soon.</p>{{- end }}
+          {{- else }}<p class="text-secondary mb-0">Family announcements and milestones will appear here.</p>{{- end }}
+        </div>
+      </article>
+
+      {{- /* From the family — a testimonial styled as a warm-graded photo. */ -}}
+      <article class="testimonial-card mosaic-tile--wide">
+        <div class="testimonial-card__media" aria-hidden="true"></div>
+        <blockquote class="testimonial-card__quote">
+          <p>&ldquo;My God!!! What a wonderful time with family in Montgomery and Opp, Alabama.&rdquo;</p>
+          <footer class="testimonial-card__cite">Shared after the 2024 homecoming</footer>
+        </blockquote>
+      </article>
+
+      {{- /* Through the years — past reunion thumbnails. */ -}}
+      <article class="brand-card mosaic-tile mosaic-tile--wide">
+        <div class="mosaic-tile__body">
+          <div class="d-flex justify-content-between align-items-baseline mb-3">
+            <h2 class="h5 mb-0">Through the years</h2>
+            <a class="mosaic-tile__link mt-0" href="{{ "/reunion/" | relLangURL }}">All past reunions →</a>
+          </div>
+          {{- $past := slice }}
+          {{- with site.GetPage "/reunion" }}{{ range .Sections.ByDate.Reverse }}{{ if .Date.Before now }}{{ $past = $past | append . }}{{ end }}{{ end }}{{ end }}
+          {{- with first 8 $past }}
+          <div class="years-strip">
+            {{- range . }}
+            <a class="years-strip__item" href="{{ .RelPermalink }}" aria-label="{{ .Date.Format "2006" }} — {{ .Params.city }}">
+              <span class="years-strip__cap">
+                <span class="years-strip__year">{{ .Date.Format "2006" }}</span>
+                <span class="years-strip__city">{{ .Params.city }}</span>
+              </span>
+            </a>
+            {{- end }}
+          </div>
+          {{- else }}<p class="text-secondary mb-0">Past reunions will appear here.</p>{{- end }}
+        </div>
+      </article>
+
+      {{- /* Join the email list (MailerLite partial lands in Wave 5). */ -}}
+      <article class="brand-card mosaic-tile bg-cream">
+        <div class="mosaic-tile__body">
+          <p class="eyebrow">Stay connected</p>
+          <h2 class="h5 mb-2">Join the email list</h2>
+          <p class="text-secondary mb-3">Reunion news &amp; photos, straight to your inbox.</p>
+          <a class="btn btn-primary btn-sm mosaic-tile__link mt-auto" href="{{ "/contact/" | relLangURL }}">Subscribe</a>
+        </div>
+      </article>
+
+      {{- /* Support the reunion (donate partial lands in Wave 5). */ -}}
+      <article class="brand-card mosaic-tile">
+        <div class="mosaic-tile__body">
+          <p class="eyebrow">Support</p>
+          <h2 class="h5 mb-2">Support the reunion</h2>
+          <p class="text-secondary mb-3">Help cover the venue, food, and t-shirts so everyone can gather.</p>
+          <a class="btn btn-join btn-sm mt-auto align-self-start" href="{{ "/contact/" | relLangURL }}">♥ Ways to give</a>
+        </div>
+      </article>
+
     </div>
-  </section>
-  {{- end }}
-
-  {{- /* 3. Family-history preview. */ -}}
-  <section class="home-section py-5 border-top" aria-labelledby="home-history-h">
-    <h2 id="home-history-h" class="h3 mb-3">Family history</h2>
-    {{- with site.GetPage "/history" }}
-      <div class="text-secondary">{{ .Summary }}</div>
-      <p class="mt-2 mb-0"><a href="{{ .RelPermalink }}">Explore our history</a></p>
-    {{- else }}
-      <p class="text-secondary mb-0">Our story begins with Rev. Julius Mullins (b. 1889). The family-history section is coming soon.</p>
-    {{- end }}
-  </section>
-
-  {{- /* 4. Latest news. */ -}}
-  <section class="home-section py-5 border-top" aria-labelledby="home-news-h">
-    <h2 id="home-news-h" class="h3 mb-3">Latest news</h2>
-    {{- $news := site.GetPage "/news" }}
-    {{- with $news }}
-      {{- $items := first 3 (.RegularPages.ByDate.Reverse) }}
-      {{- with $items }}
-        <ul class="list-unstyled mb-3">
-          {{- range . }}
-          <li class="mb-3">
-            <a class="fw-semibold" href="{{ .RelPermalink }}">{{ .Title }}</a>
-            <span class="d-block small text-secondary">{{ .Date.Format "January 2, 2006" }}</span>
-          </li>
-          {{- end }}
-        </ul>
-        <p class="mb-0"><a href="{{ .RelPermalink }}">All news</a></p>
-      {{- else }}
-        <p class="text-secondary mb-0">No news yet — check back soon.</p>
-      {{- end }}
-    {{- else }}
-      <p class="text-secondary mb-0">Family announcements and milestones will appear here (News section, Phase 4).</p>
-    {{- end }}
-  </section>
-
-  {{- /* 5. Recent-activity stream — recent-activity.html lands in task 2.4. */ -}}
-  <section class="home-section py-5 border-top" aria-labelledby="home-activity-h">
-    <h2 id="home-activity-h" class="h3 mb-3">Community pulse</h2>
-    {{- if templates.Exists "partials/recent-activity.html" }}
-      {{ partial "recent-activity.html" . }}
-    {{- else }}
-      <p class="text-secondary mb-0">Recent comments and updates from the family will stream here (Phase 2).</p>
-    {{- end }}
-  </section>
-
-  {{- /* 6. Email + donate CTAs — email-signup (Phase 5) and donate (task 2.6). */ -}}
-  <section class="home-section py-5 border-top" aria-labelledby="home-cta-h">
-    <h2 id="home-cta-h" class="h3 mb-4">Stay connected</h2>
-    <div class="row g-4">
-      <div class="col-md-6">
-        {{- if templates.Exists "partials/email-signup.html" }}
-          {{ partial "email-signup.html" . }}
-        {{- else }}
-          <h3 class="h5">Join the email list</h3>
-          <p class="text-secondary mb-0">Sign up to get reunion updates by email (MailerLite, Phase 5).</p>
-        {{- end }}
-      </div>
-      <div class="col-md-6">
-        {{- if templates.Exists "partials/donate.html" }}
-          {{ partial "donate.html" . }}
-        {{- else }}
-          <h3 class="h5">Support the reunion</h3>
-          <p class="text-secondary mb-0">Ways to give will appear here (Phase 2).</p>
-        {{- end }}
-      </div>
-    </div>
-  </section>
-
-</div>
+  </div>
+</section>
 {{ end }}

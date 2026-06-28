@@ -1,0 +1,59 @@
+{{- /* reunion-state-past.html — landing body for a past reunion.
+
+       Embedded by reunionyear/list.html. Context: dict {page, isUpcoming}. Renders
+       "Looking back" + featured photo, optional highlights/recap cards, a
+       day-by-day recap (reusing schedule cards), and a photo masonry gallery.
+       Section ids match the sticky menu. */ -}}
+{{- $p := .page -}}
+{{- with $p }}
+<div class="row g-4 reunion-section" id="overview">
+  <div class="col-lg-7">
+    <h2 class="reunion-section__title">Looking back</h2>
+    <div class="content">{{ .Content }}</div>
+  </div>
+  <div class="col-lg-5">
+    <div class="brand-card overflow-hidden h-100">
+      <div class="mosaic-tile__media h-100" style="min-height:200px" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+{{- with .Params.highlights }}
+<section class="reunion-section" id="recap" aria-labelledby="recap-h">
+  <h2 class="reunion-section__title" id="recap-h">Highlights &amp; recap</h2>
+  <div class="recap-grid">
+    {{- range . }}
+    <article class="brand-card recap-card">
+      <h3 class="recap-card__title">{{ .title }}</h3>
+      <p class="text-secondary mb-0">{{ .blurb }}</p>
+    </article>
+    {{- end }}
+  </div>
+</section>
+{{- end }}
+
+{{- with .Params.schedule }}
+<section class="reunion-section" id="schedule" aria-labelledby="schedule-h">
+  <h2 class="reunion-section__title" id="schedule-h">How the weekend went</h2>
+  {{ partial "schedule.html" $p }}
+</section>
+{{- end }}
+
+<section class="reunion-section" id="photos" aria-labelledby="photos-h">
+  <h2 class="reunion-section__title" id="photos-h">Photos &amp; Memories</h2>
+  {{- $albums := where (default (slice) .Params.legacy_albums) "url" "!=" "" }}
+  {{- with $albums }}
+  <p class="text-secondary">Albums from this reunion (being migrated):</p>
+  <ul class="mb-3">{{ range . }}<li><a href="{{ .url }}" rel="noopener" target="_blank">{{ .label }}</a></li>{{ end }}</ul>
+  {{- end }}
+  <div class="gallery-grid">
+    <div class="gallery-grid__item gallery-grid__item--lead"></div>
+    <div class="gallery-grid__item"></div>
+    <div class="gallery-grid__item"></div>
+    <div class="gallery-grid__item"></div>
+    <div class="gallery-grid__item"></div>
+    <div class="gallery-grid__item"></div>
+    <div class="gallery-grid__item"></div>
+  </div>
+</section>
+{{- end }}

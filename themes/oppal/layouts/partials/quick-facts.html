@@ -1,55 +1,23 @@
-{{- /* themes/oppal/layouts/partials/quick-facts.html — quick-facts bar.
+{{- /* themes/oppal/layouts/partials/quick-facts.html — "The details" sidebar card.
 
-       Context: the reunion Page. Reads structured front matter only; each fact is
-       rendered just when present, so partial reunions don't show empty cells.
-       Structure only. */ -}}
+       Context: the reunion Page. Renders the structured facts as the vertical
+       crimson-headed card from the mockup overview sidebar. Each row appears only
+       when its field is present, so partial reunions don't show empty cells.
+       Brand: _components.scss .details-card. */ -}}
 {{- $p := . -}}
-<section class="quick-facts border-top border-bottom py-3" aria-label="Reunion quick facts">
-  {{- $isUpcoming := ge $p.Date now -}}
-  <div class="container">
-    <dl class="row mb-0">
-      {{- if $p.Params.save_the_date }}
-      {{- /* Save-the-date: minimal facts. The shared Location cell below shows the
-             city, so here we only add "When" (no register-by / venue / status). */ -}}
-      <div class="col-6 col-md">
-        <dt class="small text-uppercase">When</dt>
-        <dd class="mb-0">{{ or $p.Params.dates_display ($p.Date.Format "2006") }}</dd>
-      </div>
-      {{- else if $p.Params.dates_exact }}
-      <div class="col-6 col-md">
-        <dt class="small text-uppercase">Starts</dt>
-        <dd class="mb-0">{{ $p.Date.Format "Mon, Jan 2, 2006" }}</dd>
-      </div>
-      {{- with $p.Params.end_date }}
-      <div class="col-6 col-md">
-        <dt class="small text-uppercase">Ends</dt>
-        <dd class="mb-0">{{ (time .).Format "Mon, Jan 2, 2006" }}</dd>
-      </div>
-      {{- end }}
-      {{- else }}
-      <div class="col-6 col-md">
-        <dt class="small text-uppercase">Year</dt>
-        <dd class="mb-0">{{ $p.Date.Format "2006" }}</dd>
-      </div>
-      {{- end }}
-      {{- with $p.Params.city }}
-      <div class="col-6 col-md">
-        <dt class="small text-uppercase">Location</dt>
-        <dd class="mb-0">{{ . }}</dd>
-      </div>
-      {{- end }}
-      {{- with (or $p.Params.venue $p.Params.hotel) }}
-      <div class="col-6 col-md">
-        <dt class="small text-uppercase">Venue / Hotel</dt>
-        <dd class="mb-0">{{ . }}</dd>
-      </div>
-      {{- end }}
-      {{- if $isUpcoming }}{{ with $p.Params.register_deadline }}
-      <div class="col-6 col-md">
-        <dt class="small text-uppercase">Register by</dt>
-        <dd class="mb-0">{{ (time .).Format "Jan 2, 2006" }}</dd>
-      </div>
-      {{- end }}{{ end }}
-    </dl>
-  </div>
-</section>
+{{- $isUpcoming := ge $p.Date now -}}
+<aside class="details-card brand-card" aria-label="Reunion details">
+  <div class="details-card__head">The details</div>
+  <dl class="details-card__list mb-0">
+    {{- if $p.Params.dates_exact }}
+    <div class="details-card__row"><dt>Dates</dt><dd>{{ $p.Date.Format "Jan 2" }}{{ with $p.Params.end_date }}&ndash;{{ (time .).Format "Jan 2, 2006" }}{{ else }}{{ $p.Date.Format ", 2006" }}{{ end }}</dd></div>
+    {{- else }}
+    <div class="details-card__row"><dt>When</dt><dd>{{ or $p.Params.dates_display ($p.Date.Format "2006") }}</dd></div>
+    {{- end }}
+    {{- with $p.Params.city }}<div class="details-card__row"><dt>City</dt><dd>{{ . }}</dd></div>{{ end }}
+    {{- with (or $p.Params.hotel $p.Params.venue) }}<div class="details-card__row"><dt>Host hotel</dt><dd>{{ . }}</dd></div>{{ end }}
+    {{- if $isUpcoming }}{{ with $p.Params.register_deadline }}
+    <div class="details-card__row details-card__row--accent"><dt>Register by</dt><dd>{{ (time .).Format "Jan 2" }}</dd></div>
+    {{- end }}{{ end }}
+  </dl>
+</aside>

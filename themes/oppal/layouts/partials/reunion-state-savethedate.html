@@ -1,0 +1,14 @@
+{{- /* reunion-state-savethedate.html — minimal landing body for a save-the-date.
+
+       Embedded by reunionyear/list.html. Context: dict {page, isUpcoming}. The
+       2028 case: announce the destination, invite the email list, nothing else. */ -}}
+{{- $p := .page -}}
+{{- with $p }}
+<div class="row reunion-section" id="overview">
+  <div class="col-lg-8">
+    <h2 class="reunion-section__title">Save the date</h2>
+    <div class="content">{{ .Content }}</div>
+    <p class="mt-3 mb-0"><a class="btn btn-primary" href="{{ "/contact/" | relLangURL }}">Get notified &mdash; join the email list</a></p>
+  </div>
+</div>
+{{- end }}

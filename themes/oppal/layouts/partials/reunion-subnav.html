@@ -1,38 +1,29 @@
-{{- /* themes/oppal/layouts/partials/reunion-subnav.html — local reunion menu.
+{{- /* themes/oppal/layouts/partials/reunion-subnav.html — sticky section menu.
 
-       Context: the reunion landing Page (the bundle's index). Builds links to the
-       subpages that actually exist, in a fixed order, plus an in-page Comments
-       anchor. Missing subpages are skipped, so the subnav never points at a 404.
-       Structure only; sticky/compact behaviour is a later CSS decision (§10.3). */ -}}
+       Context: the reunion landing Page (or, on a subpage, the parent year passed
+       in). Builds in-page anchors to exactly the sections the current state
+       renders, so the menu never points at a section that isn't there. Used as the
+       landing's sticky section menu and, on subpages, as a link back to the
+       landing's sections. Brand + sticky behaviour: _components.scss .reunion-subnav;
+       active state via Bootstrap ScrollSpy (assets/js/main.js). */ -}}
 {{- $root := . -}}
-{{- $items := slice
-      (dict "label" "Overview"          "ref" "")
-      (dict "label" "Registration"      "ref" "register")
-      (dict "label" "Schedule"          "ref" "schedule")
-      (dict "label" "Travel & Lodging"  "ref" "travel")
-      (dict "label" "Photos"            "ref" "photos")
-      (dict "label" "FAQ"               "ref" "faq")
-}}
-<nav class="reunion-subnav border-bottom" aria-label="Reunion sections">
+{{- $isUpcoming := ge .Date now -}}
+{{- $saveDate := .Params.save_the_date -}}
+{{- $detailsReady := and $isUpcoming (not $saveDate) -}}
+{{- $items := slice (dict "label" "Overview" "id" "overview") -}}
+{{- if $detailsReady }}{{ $items = $items | append (dict "label" "Registration" "id" "registration") }}{{ end -}}
+{{- if and (not $isUpcoming) .Params.highlights }}{{ $items = $items | append (dict "label" "Recap" "id" "recap") }}{{ end -}}
+{{- if .Params.schedule }}{{ $items = $items | append (dict "label" "Schedule" "id" "schedule") }}{{ end -}}
+{{- if $detailsReady }}{{ $items = $items | append (dict "label" "Travel & Lodging" "id" "travel") }}{{ end -}}
+{{- if and $detailsReady .Params.faq }}{{ $items = $items | append (dict "label" "FAQ" "id" "faq") }}{{ end -}}
+{{- $items = $items | append (dict "label" "Photos" "id" "photos") -}}
+{{- $items = $items | append (dict "label" "Comments" "id" "comments") -}}
+<nav id="reunion-subnav" class="reunion-subnav" aria-label="Reunion sections">
   <div class="container">
-    <ul class="nav">
+    <ul class="reunion-subnav__list nav mb-0">
       {{- range $items }}
-        {{- $label := .label }}
-        {{- $url := "" }}
-        {{- if eq .ref "" }}
-          {{- $url = $root.RelPermalink }}
-        {{- else }}
-          {{- with $root.GetPage .ref }}{{ $url = .RelPermalink }}{{ end }}
-        {{- end }}
-        {{- with $url }}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ . }}">{{ $label }}</a>
-          </li>
-        {{- end }}
+      <li class="nav-item"><a class="nav-link" href="{{ $root.RelPermalink }}#{{ .id }}">{{ .label }}</a></li>
       {{- end }}
-      <li class="nav-item">
-        <a class="nav-link" href="{{ $root.RelPermalink }}#comments">Comments</a>
-      </li>
     </ul>
   </div>
 </nav>

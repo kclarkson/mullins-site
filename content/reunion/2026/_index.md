@@ -18,20 +18,66 @@ register_deadline: 2026-05-31
 cover_image: ""           # designed cover added later (brand decision pending)
 description: "Join us June 19–21, 2026 in Charlotte, NC for the Carolina Connection reunion."
 
-# Schedule rows (rendered by the schedule partial). Placeholder until finalized.
+# Schedule rows (rendered by the schedule partial), grouped by `day` into cards.
+# From site-dev/2026-MullinsAgenda-Charlotte.md. Times left blank where the agenda
+# doesn't specify one (the program runs in listed order).
 schedule:
+  # Friday, June 19 — UNC-Charlotte Marriott Hotel
   - day: "Friday, June 19"
-    time: "All day"
-    title: "Arrivals & T-shirt pickup"
-    location: "UNC-Charlotte Marriott"
+    time: "4:00–8:00 PM"
+    title: "Juneteenth Celebration at the Boardwalk"
+    location: "The Boardwalk, across from the Marriott"
+    offsite: true
+    notes: "Free tickets available from the reception team"
+  - day: "Friday, June 19"
+    time: "6:00–9:00 PM"
+    title: "Pool-Side Check-in (T-shirts & packets)"
+    location: "UNC-Charlotte Marriott Hotel, 9041 Robert Snyder Rd, Charlotte, NC"
+    notes: "Reunion reception team"
+  # Saturday, June 20 — Jetton Waterfront Hall
   - day: "Saturday, June 20"
-    time: "TBD"
-    title: "Main event"
-    location: "Jetton Waterfront Hall, Lake Norman, Cornelius, NC"
+    time: "10:00 AM"
+    title: "Welcome"
+    location: "Jetton Waterfront Hall, 19000 Jetton Rd, Cornelius, NC"
+    notes: "Mary & Nevaeh"
+  - day: "Saturday, June 20"
+    time: ""
+    title: "Ice Breaker"
+  - day: "Saturday, June 20"
+    time: ""
+    title: "Significant Events & Roll Call"
+    notes: "Anthony"
+  - day: "Saturday, June 20"
+    time: ""
+    title: "Historian Update"
+    notes: "Adreonna"
+  - day: "Saturday, June 20"
+    time: ""
+    title: "Health Update"
+    notes: "Maxine"
+  - day: "Saturday, June 20"
+    time: ""
+    title: "Lunch"
+    notes: "Catered by Chef FLii, LLC"
+  - day: "Saturday, June 20"
+    time: ""
+    title: "Social Time"
+  - day: "Saturday, June 20"
+    time: ""
+    title: "Family Photo"
+  - day: "Saturday, June 20"
+    time: "5:00 PM"
+    title: "Departure"
+  # Sunday, June 21
   - day: "Sunday, June 21"
-    time: "TBD"
-    title: "Farewell"
-    location: "TBD"
+    time: "8:00 & 10:00 AM"
+    title: "Church Services"
+    location: "Friendship Missionary Baptist Church, 3400 Beatties Ford Rd, Charlotte, NC"
+    offsite: true
+  - day: "Sunday, June 21"
+    time: "10:00 AM"
+    title: "Meeting (tentative)"
+    location: "UNC-Charlotte Marriott Hotel"
 
 # FAQ entries (rendered by the faq accordion).
 faq:

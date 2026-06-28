@@ -1,0 +1,33 @@
+{{- /* themes/oppal/layouts/partials/conversion-banner.html — registration teaser.
+
+       Context: the reunion Page (upcoming). Split card: a pitch on the left, a
+       crimson CTA panel on the right (mockup §G). RSVP, no payment (locked
+       decision) — the optional price panel only appears when `register_fee_from`
+       is set in front matter; otherwise it's a plain RSVP prompt. */ -}}
+{{- $p := . -}}
+{{- $city := $p.Params.city -}}
+{{- with $city }}{{ $city = index (split . ",") 0 }}{{ end -}}
+{{- $regURL := printf "%sregister/" $p.RelPermalink -}}
+{{- with $p.GetPage "register" }}{{ $regURL = .RelPermalink }}{{ end -}}
+<div class="conversion-banner">
+  <div class="conversion-banner__pitch">
+    <h3 class="conversion-banner__title">Register your family{{ with $city }} for {{ . }}{{ end }}</h3>
+    <p class="conversion-banner__lead">One quick form — add everyone and note t-shirts &amp; meals. About five minutes.</p>
+    <ul class="conversion-banner__list list-unstyled mb-0">
+      <li><span class="conversion-banner__check">&check;</span> Adults, kids &amp; meals in one place</li>
+      <li><span class="conversion-banner__check">&check;</span> Reunion t-shirts sized per person</li>
+      <li><span class="conversion-banner__check">&check;</span> RSVP now — settle up with the organizers</li>
+    </ul>
+  </div>
+  <div class="conversion-banner__cta">
+    {{- with $p.Params.register_fee_from }}
+    <div class="conversion-banner__eyebrow eyebrow mb-0">From</div>
+    <div class="conversion-banner__price">{{ . }}</div>
+    {{- with $p.Params.register_fee_note }}<div class="conversion-banner__note">{{ . }}</div>{{ end }}
+    {{- else }}
+    <div class="conversion-banner__price conversion-banner__price--sm">RSVP your household</div>
+    {{- end }}
+    <a class="btn conversion-banner__btn" href="{{ $regURL }}">RSVP now &rarr;</a>
+    {{- with $p.Params.register_deadline }}<div class="conversion-banner__foot">Register by {{ (time .).Format "Jan 2" }}</div>{{ end }}
+  </div>
+</div>

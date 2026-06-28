@@ -1,35 +1,39 @@
-{{- /* themes/oppal/layouts/partials/hero.html — reunion / home hero.
+{{- /* themes/oppal/layouts/partials/hero.html — reunion / home photo hero.
 
        Context: a dict
          .page        -> the reunion Page to feature
-         .isUpcoming  -> bool (from featured-reunion). Switches the wording:
-                          upcoming  => dates + Register CTA + countdown
-                          gap mode  => "Most Recent Reunion" + photos CTA, no countdown
+         .isUpcoming  -> bool (from featured-reunion). Drives three states:
+                          save-the-date (future, details TBD) -> "Save the Date"
+                            badge, email-list CTA, no countdown
+                          upcoming (future, details set)      -> "Registration Open"
+                            badge, Register CTA, live countdown
+                          past / gap                          -> "Archived" badge,
+                            photos / recap CTAs, no countdown
 
-       Structure only — no design decisions baked in. Bootstrap utility classes
-       give it shape; the real look comes with the brand pass. */ -}}
+       Layout follows the mockup hero: a cover photo under a dark scrim (or the
+       cross-hatch pattern fallback when cover_image is empty), a gold mono
+       date·location eyebrow, a white display title, a corner status badge, and
+       paper-outline CTAs. Brand styling lives in _components.scss (.reunion-hero). */ -}}
 {{- $page := .page -}}
 {{- $isUpcoming := .isUpcoming -}}
 {{- with $page -}}
-{{- /* Three states: full-upcoming (date in future, details set) → dates + Register
-       + countdown; save-the-date (future but details TBD) → "Save the Date", no
-       countdown, email-list CTA; past/gap → "Archived", photos CTA. */ -}}
 {{- $saveDate := .Params.save_the_date -}}
 {{- $detailsReady := and $isUpcoming (not $saveDate) -}}
-<section class="reunion-hero py-5" aria-labelledby="hero-title">
-  <div class="container">
+{{- $cover := .Params.cover_image -}}
+<section class="reunion-hero{{ if not $cover }} reunion-hero--pattern{{ end }}" aria-labelledby="hero-title"
+  {{- with $cover }} style="background-image:url('{{ . | relURL }}')"{{ end }}>
+
+  {{- /* Corner status badge — one per state. */ -}}
+  <div class="reunion-hero__badge">
+    {{- if $saveDate }}<span class="status-pill status-pill--year label-star">Save the Date</span>
+    {{- else if $detailsReady }}<span class="status-pill status-pill--open label-star">Registration Open</span>
+    {{- else }}<span class="status-pill status-pill--archived">Past Reunion · Archived</span>{{ end }}
+  </div>
+
+  <div class="container reunion-hero__inner">
+    {{- /* Gold mono eyebrow: dates · city. Exact range only when dates_exact;
+           otherwise a friendly dates_display ("Summer 2028") or the year. */ -}}
     <p class="hero-eyebrow eyebrow mb-2">
-      {{- if $saveDate }}<span class="label-star">Save the Date</span>
-      {{- else if $isUpcoming }}Upcoming Reunion
-      {{- else }}<span class="status-pill status-pill--archived">Past Reunion · Archived</span>{{ end }}
-    </p>
-    <h1 id="hero-title" class="hero-title mb-2">{{ .Title }}</h1>
-
-    {{- with .Params.theme }}<p class="hero-theme lead mb-3">{{ . }}</p>{{ end }}
-
-    <p class="hero-meta mb-4">
-      {{- /* Full date range only when dates are exact; otherwise a friendly
-             `dates_display` (e.g. "Summer 2028") or the year — no false precision. */ -}}
       <span class="hero-dates">
         {{- if .Params.dates_exact -}}
           {{ .Date.Format "January 2" }}{{ with .Params.end_date }}&ndash;{{ (time .).Format "January 2, 2006" }}{{ else }}{{ $page.Date.Format ", 2006" }}{{ end }}
@@ -40,25 +44,28 @@
       {{- with .Params.city }}<span class="hero-city"> · {{ . }}</span>{{ end }}
     </p>
 
-    {{- if $saveDate }}<p class="hero-note text-secondary mb-4">Dates &amp; details to be announced — join the email list and we'll let you know.</p>{{ end }}
+    <h1 id="hero-title" class="hero-title mb-2">{{ .Title }}</h1>
 
-    <div class="hero-actions d-flex flex-wrap gap-2">
+    {{- with .Params.theme }}<p class="hero-theme lead mb-3">{{ . }}</p>{{ end }}
+
+    {{- if $saveDate }}<p class="hero-note mb-4">Dates &amp; details to be announced — join the email list and we'll let you know.</p>{{ end }}
+
+    <div class="hero-actions d-flex flex-wrap align-items-center gap-2">
       {{- if $saveDate }}
         <a class="btn btn-primary" href="{{ "/contact/" | relLangURL }}">Join the email list</a>
-        <a class="btn btn-view" href="{{ "/reunion/" | relLangURL }}">Explore past reunions</a>
+        <a class="btn btn-outline-paper" href="{{ "/reunion/" | relLangURL }}">Explore past reunions</a>
       {{- else if $detailsReady }}
         <a class="btn btn-primary" href="{{ (.GetPage "register").RelPermalink | default (printf "%sregister/" .RelPermalink) }}">Register</a>
-        <a class="btn btn-view" href="#overview">Reunion details</a>
+        <a class="btn btn-outline-paper" href="#overview">Reunion details</a>
       {{- else }}
         <a class="btn btn-primary" href="#photos">Relive the memories</a>
-        <a class="btn btn-view" href="#overview">Read the recap</a>
+        <a class="btn btn-outline-paper" href="#overview">Read the recap</a>
+      {{- end }}
+      {{- /* Live countdown — full upcoming only. Styled as a gold inline pill. */ -}}
+      {{- if $detailsReady }}
+        <span class="hero-countdown" data-countdown="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}" data-countdown-label="to go" aria-live="polite"></span>
       {{- end }}
     </div>
-
-    {{- /* Live countdown — only for a full upcoming reunion (not save-the-date/gap). */ -}}
-    {{- if $detailsReady }}
-      <div class="hero-countdown mt-4" data-countdown="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}" aria-live="polite"></div>
-    {{- end }}
   </div>
 </section>
 {{- end }}

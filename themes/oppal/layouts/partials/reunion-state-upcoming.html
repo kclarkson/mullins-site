@@ -1,0 +1,61 @@
+{{- /* reunion-state-upcoming.html — landing body for a full upcoming reunion.
+
+       Embedded by reunionyear/list.html. Context: dict {page, isUpcoming}. Renders
+       overview + details sidebar, the registration conversion banner, the schedule
+       date-cards, a travel + FAQ row, and a photos placeholder. Section ids match
+       the sticky menu in reunion-subnav.html. */ -}}
+{{- $p := .page -}}
+{{- with $p }}
+<div class="row g-4 reunion-section" id="overview">
+  <div class="col-lg-8">
+    <h2 class="reunion-section__title">Overview</h2>
+    <div class="content">{{ .Content }}</div>
+  </div>
+  <div class="col-lg-4">
+    {{ partial "quick-facts.html" . }}
+  </div>
+</div>
+
+<section class="reunion-section" id="registration" aria-labelledby="registration-h">
+  <h2 class="reunion-section__title visually-hidden" id="registration-h">Registration</h2>
+  {{ partial "conversion-banner.html" . }}
+</section>
+
+{{- with .Params.schedule }}
+<section class="reunion-section" id="schedule" aria-labelledby="schedule-h">
+  <div class="reunion-section__head">
+    <h2 class="reunion-section__title" id="schedule-h">Schedule</h2>
+    {{- with $p.GetPage "schedule" }}<a class="reunion-section__more" href="{{ .RelPermalink }}">Full schedule &rarr;</a>{{ end }}
+  </div>
+  {{ partial "schedule.html" $p }}
+</section>
+{{- end }}
+
+<div class="row g-4">
+  <section class="col-md-6 reunion-section" id="travel" aria-labelledby="travel-h">
+    <h2 class="reunion-section__title" id="travel-h">Travel &amp; Lodging</h2>
+    {{- with $p.GetPage "travel" }}
+      <div class="text-secondary">{{ .Summary }}</div>
+      <p class="mt-2 mb-0"><a class="reunion-section__more" href="{{ .RelPermalink }}">Travel &amp; lodging details &rarr;</a></p>
+    {{- else }}<p class="text-secondary mb-0">Travel details coming soon.</p>{{- end }}
+  </section>
+  {{- with .Params.faq }}
+  <section class="col-md-6 reunion-section" id="faq" aria-labelledby="faq-h">
+    <h2 class="reunion-section__title" id="faq-h">FAQ</h2>
+    {{ partial "faq.html" $p }}
+  </section>
+  {{- end }}
+</div>
+
+<section class="reunion-section" id="photos" aria-labelledby="photos-h">
+  <div class="reunion-section__head">
+    <h2 class="reunion-section__title" id="photos-h">Photos &amp; Memories</h2>
+    <span class="text-secondary small">filling up after the reunion</span>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-grid__item gallery-grid__item--lead"></div>
+    <div class="gallery-grid__item"></div>
+    <div class="gallery-grid__item"></div>
+  </div>
+</section>
+{{- end }}

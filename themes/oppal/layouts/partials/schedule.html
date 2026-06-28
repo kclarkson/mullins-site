@@ -1,19 +1,34 @@
-{{- /* themes/oppal/layouts/partials/schedule.html — schedule preview block.
+{{- /* themes/oppal/layouts/partials/schedule.html — date-card timeline (mockup §H).
 
-       Context: the reunion Page. Reads the `schedule` front-matter array (each row:
-       day, time, title, location). Renders nothing if the array is empty, so the
-       section can be omitted cleanly. Structure only. */ -}}
-{{- with .Params.schedule }}
+       Context: the reunion Page. Groups the flat `schedule` front-matter array by
+       its `day` field into one card per day; each event renders a right-aligned
+       time column, a vertical rule, the title, and (when present) location, an
+       OFFSITE badge, and notes. Renders nothing when the array is empty. */ -}}
+{{- $rows := .Params.schedule -}}
+{{- with $rows }}
+{{- $days := slice -}}
+{{- range $rows }}{{ if not (in $days .day) }}{{ $days = $days | append .day }}{{ end }}{{ end -}}
 <div class="schedule">
-  <ul class="list-unstyled mb-0">
-    {{- range . }}
-    <li class="schedule-item py-2 border-bottom">
-      <span class="schedule-day fw-semibold">{{ .day }}</span>
-      {{- with .time }} <span class="schedule-time">· {{ . }}</span>{{ end }}
-      <span class="schedule-title d-block">{{ .title }}</span>
-      {{- with .location }}<span class="schedule-location d-block small text-secondary">{{ . }}</span>{{ end }}
-    </li>
-    {{- end }}
-  </ul>
+  {{- range $days }}
+  {{- $day := . }}
+  {{- $events := where $rows "day" $day }}
+  <div class="schedule-card">
+    <div class="schedule-card__head">
+      <span class="schedule-card__day">{{ $day }}</span>
+    </div>
+    <div class="schedule-card__body">
+      {{- range $events }}
+      <div class="schedule-event">
+        <div class="schedule-event__time">{{ with .time }}{{ . }}{{ else }}&nbsp;{{ end }}</div>
+        <div class="schedule-event__detail">
+          <div class="schedule-event__title">{{ .title }}{{ if .offsite }}<span class="badge-offsite">Offsite</span>{{ end }}</div>
+          {{- with .location }}<div class="schedule-event__loc">📍 {{ . }}</div>{{ end }}
+          {{- with .notes }}<div class="schedule-event__notes">{{ . }}</div>{{ end }}
+        </div>
+      </div>
+      {{- end }}
+    </div>
+  </div>
+  {{- end }}
 </div>
 {{- end }}

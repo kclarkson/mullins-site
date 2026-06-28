@@ -52,9 +52,31 @@
     });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initCountdowns);
-  } else {
+  /*
+   * Reunion landing sticky section menu: highlight the link for the section in
+   * view. Uses Bootstrap's ScrollSpy (already in the bundle). Only spins up when
+   * the menu's first target actually exists on this page — so on subpages, where
+   * the menu links back to the landing's anchors, it stays inert.
+   */
+  function initReunionNav() {
+    var nav = document.getElementById("reunion-subnav");
+    if (!nav || typeof bootstrap === "undefined" || !bootstrap.ScrollSpy) return;
+    var first = nav.querySelector(".nav-link");
+    if (!first || !first.hash || !document.querySelector(first.hash)) return;
+    new bootstrap.ScrollSpy(document.body, {
+      target: "#reunion-subnav",
+      rootMargin: "0px 0px -55%",
+    });
+  }
+
+  function init() {
     initCountdowns();
+    initReunionNav();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
   }
 })();
