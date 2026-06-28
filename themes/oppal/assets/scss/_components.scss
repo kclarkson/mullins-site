@@ -1,22 +1,352 @@
 // _components.scss — custom component styles for the oppal theme.
 //
 // Imported AFTER Bootstrap, so Bootstrap's variables ($light, $zindex-*, …),
-// maps, and mixins are all available here. This file grows alongside the
-// partials: hero, quick-facts bar, reunion cards, and the reunion subnav.
+// maps, and mixins are all available here. Brand colours are referenced through
+// the --brand-* custom properties defined in _tokens.scss (mirror of
+// .siteproject/tokens.css) — do not hardcode hex here.
+//
+// This pass styles the GLOBAL CHROME shared by every template in the brand
+// mockup: header + nav (double-ring M logo, Join CTA), and the dark footer.
+// Page-specific components (home mosaic, reunion hero, section menu, schedule
+// cards, RSVP form) are added as their templates are built.
 
-// Skip-to-content link. Bootstrap's .visually-hidden-focusable handles the
-// show-on-focus behaviour; this just positions it above the page chrome.
+// ---------------------------------------------------------------------------
+// Skip-to-content link.
+// ---------------------------------------------------------------------------
 .skip-link {
   position: absolute;
   top: .5rem;
   left: .5rem;
   z-index: $zindex-tooltip;
   padding: .5rem .75rem;
-  background-color: $body-bg;
+  background-color: var(--brand-paper);
   border-radius: $border-radius;
 }
 
-// Footer chrome.
+// ---------------------------------------------------------------------------
+// Shared brand primitives (reused across pages).
+// ---------------------------------------------------------------------------
+
+// Mono, letter-spaced eyebrow / label (dates, small-caps section labels).
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: .8125rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--brand-muted);
+  margin-bottom: .35rem;
+}
+
+.font-display { font-family: var(--font-display); }
+
+// Warm surface helpers.
+.bg-cream { background-color: var(--brand-cream); }
+.bg-sand  { background-color: var(--brand-sand-soft); }
+
+// The signature 1.5px tan hairline, as borders.
+.border-brand    { border: 1.5px solid var(--brand-line) !important; }
+.border-brand-top    { border-top: 1.5px solid var(--brand-line-2); }
+.border-brand-bottom { border-bottom: 1.5px solid var(--brand-line-2); }
+
+// Generic bordered card on cream/white.
+.brand-card {
+  border: 1.5px solid var(--brand-line);
+  border-radius: $border-radius;
+  background-color: var(--brand-paper);
+}
+
+// Buttons — design system treatment: squared, Space Mono UPPERCASE, letter-spaced.
+.btn {
+  --bs-btn-border-radius: .25rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: .8125rem;
+}
+.btn-lg { --bs-btn-border-radius: .25rem; font-size: .9375rem; }
+.btn-sm { --bs-btn-border-radius: .2rem; font-size: .75rem; }
+
+// Crimson primary (REGISTER NOW).
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+}
+
+// Gold (JOIN EMAIL LIST) — gold fill, ink text. ($secondary is taupe, so this
+// is its own variant rather than .btn-secondary.)
+.btn-gold {
+  --bs-btn-color: var(--brand-ink);
+  --bs-btn-bg: var(--brand-secondary);
+  --bs-btn-border-color: var(--brand-secondary);
+  --bs-btn-hover-color: var(--brand-ink);
+  --bs-btn-hover-bg: #b3851f;
+  --bs-btn-hover-border-color: #b3851f;
+  --bs-btn-border-radius: .25rem;
+  font-weight: 700;
+}
+
+// Ink outline (VIEW DETAILS) on light backgrounds.
+.btn-view {
+  --bs-btn-color: var(--brand-ink);
+  --bs-btn-border-color: var(--brand-ink);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--brand-ink);
+  --bs-btn-hover-border-color: var(--brand-ink);
+  --bs-btn-border-radius: .25rem;
+  border-width: 1.5px;
+}
+
+// Outline button for use on dark/photo heroes.
+.btn-outline-paper {
+  --bs-btn-color: #fff;
+  --bs-btn-border-color: rgba(255, 255, 255, .85);
+  --bs-btn-hover-color: var(--brand-ink);
+  --bs-btn-hover-bg: #fff;
+  --bs-btn-hover-border-color: #fff;
+  --bs-btn-border-radius: .25rem;
+}
+
+// Gold star accent for key labels (★ THIS YEAR).
+.label-star::before { content: "\2605"; color: var(--brand-secondary); margin-right: .35em; }
+
+// Status pills / labels — Space Mono, uppercase, letter-spaced (design system).
+// The Final palette has NO green; "registration open" is a gold dashed pill.
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  padding: .2rem .65rem;
+  border-radius: $border-radius-sm;
+}
+// "★ REGISTRATION OPEN" — gold dashed outline, gold text.
+.status-pill--open {
+  color: var(--brand-secondary);
+  border: 1.5px dashed var(--brand-secondary);
+}
+// "ARCHIVE" / "PAST REUNION" — ink outline.
+.status-pill--archived {
+  color: var(--brand-text-2);
+  border: 1.5px solid var(--brand-text-2);
+}
+// "★ THIS YEAR" — wheat fill, ink text.
+.status-pill--year {
+  color: var(--brand-ink);
+  background-color: var(--brand-gold-soft);
+}
+// "CHARLOTTE 2026" — crimson fill, cream text.
+.status-pill--place {
+  color: var(--brand-cream-2);
+  background-color: var(--brand-primary);
+}
+
+// ---------------------------------------------------------------------------
+// Flat text hero — info / index pages (wireframe: cream panel, crimson rules,
+// mono breadcrumb eyebrow, optional big terracotta year on the right).
+// ---------------------------------------------------------------------------
+.flat-hero {
+  background-color: var(--brand-cream);
+  border-top: 3px solid var(--brand-primary);
+  border-bottom: 1.5px solid var(--brand-line);
+  display: flex;
+}
+.flat-hero__rule { width: 6px; background-color: var(--brand-primary); flex: none; }
+.flat-hero__body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-top: 1.75rem;
+  padding-bottom: 1.5rem;
+}
+.flat-hero__eyebrow { color: var(--brand-primary); margin-bottom: .4rem; }
+.flat-hero h1 { margin-bottom: .35rem; }
+.flat-hero__lead { color: var(--brand-text-2); margin-bottom: 0; }
+.flat-hero__year {
+  flex: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 3.25rem;
+  line-height: .85;
+  letter-spacing: .02em;
+  color: var(--brand-accent);
+}
+
+// ---------------------------------------------------------------------------
+// Reunion year cards — "Through the years" grid (wireframe) + timeline (system).
+// ---------------------------------------------------------------------------
+.reunion-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 1.1rem 1.2rem 1.2rem;
+  background-color: var(--brand-paper);
+  transition: box-shadow .15s ease, transform .15s ease;
+}
+.reunion-card:hover {
+  box-shadow: 0 4px 16px rgba(34, 28, 23, .12);
+  transform: translateY(-2px);
+}
+.reunion-card__year {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--brand-primary);
+}
+.reunion-card__city {
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  color: var(--brand-ink);
+  margin-top: .25rem;
+}
+.reunion-card__badge { position: absolute; top: .9rem; right: 1rem; }
+.reunion-card__meta { margin-top: .5rem; }
+.reunion-card__link {
+  margin-top: auto;
+  padding-top: .9rem;
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--brand-primary);
+}
+
+// ---------------------------------------------------------------------------
+// Header + global navigation.
+// ---------------------------------------------------------------------------
+.site-header {
+  background-color: var(--brand-paper);
+  border-bottom: 1.5px solid var(--brand-line) !important;
+}
+
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+.brand-logo__ring { flex: none; }
+.brand-logo__word {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: .02em;
+  color: var(--brand-ink);
+  line-height: 1;
+}
+
+.site-header .navbar-nav .nav-link {
+  font-family: var(--font-body);
+  color: var(--brand-text-2);
+  padding-inline: .65rem;
+  &:hover,
+  &:focus { color: var(--brand-primary); }
+}
+.site-header .navbar-nav .nav-link.active {
+  color: var(--brand-primary);
+  font-weight: 700;
+}
+
+// "Join" pill + heart (donate) in the header actions.
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+.btn-join {
+  --bs-btn-color: var(--brand-primary);
+  --bs-btn-border-color: var(--brand-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--brand-primary);
+  --bs-btn-hover-border-color: var(--brand-primary);
+  --bs-btn-border-radius: .25rem;
+  --bs-btn-padding-y: .25rem;
+  --bs-btn-padding-x: .85rem;
+  border-width: 1.5px;
+}
+.navbar-heart {
+  color: var(--brand-primary);
+  display: inline-flex;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+// ---------------------------------------------------------------------------
+// Dark global footer.
+// ---------------------------------------------------------------------------
 .site-footer {
-  background-color: $light;
+  background-color: var(--brand-footer-bg);
+  color: var(--brand-footer-text);
+}
+// On the dark footer, headings and muted text need light values (the donate /
+// email-signup partials are written for light backgrounds).
+.site-footer h1, .site-footer h2, .site-footer h3, .site-footer h4,
+.site-footer .h5, .site-footer .h6 { color: #fff; }
+.site-footer .text-secondary { color: var(--brand-footer-muted) !important; }
+.site-footer .footer-brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: .02em;
+}
+.site-footer .footer-blurb { color: var(--brand-footer-muted); }
+.site-footer .footer-label {
+  font-family: var(--font-mono);
+  font-size: .6875rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--brand-muted);
+}
+.site-footer a,
+.site-footer .link-secondary {
+  color: var(--brand-footer-text) !important;
+  text-decoration: none;
+  &:hover,
+  &:focus { color: #fff !important; text-decoration: underline; }
+}
+.site-footer .footer-divider {
+  border-top: 1px solid var(--brand-footer-line);
+}
+.site-footer .footer-copy { color: var(--brand-muted); font-size: .8125rem; }
+
+// Footer social chips.
+.site-footer .social-icons .social-link {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, .10);
+  color: var(--brand-footer-text) !important;
+  &:hover,
+  &:focus { background-color: rgba(255, 255, 255, .20); color: #fff !important; }
+}
+
+// Footer newsletter / contact actions.
+.footer-newsletter .form-control {
+  background-color: #3A322A;
+  border: 1.5px solid #4A4038;
+  color: #fff;
+  &::placeholder { color: var(--brand-muted); }
+  &:focus {
+    background-color: #3A322A;
+    color: #fff;
+    border-color: var(--brand-primary);
+    box-shadow: none;
+  }
+}
+.btn-contact-organizers {
+  --bs-btn-color: var(--brand-gold-soft);
+  --bs-btn-border-color: var(--brand-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--brand-primary);
+  --bs-btn-hover-border-color: var(--brand-primary);
+  border-width: 1.5px;
+  font-weight: 600;
 }

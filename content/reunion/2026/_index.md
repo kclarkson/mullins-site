@@ -8,6 +8,7 @@ type: reunionyear
 # Structured fields — drive templates, quick-facts, and featured selection (§5).
 date: 2026-06-19          # start date — drives the sorting/selection
 end_date: 2026-06-21
+dates_exact: true         # show full date range (past reunions w/o exact dates show year only)
 city: "Charlotte, NC"
 theme: "Carolina Connection"
 hotel: "UNC-Charlotte Marriott Hotel & Conference Center"

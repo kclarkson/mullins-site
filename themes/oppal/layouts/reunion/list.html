@@ -1,0 +1,53 @@
+{{- /* themes/oppal/layouts/reunion/list.html — the "Past Reunions" index.
+
+       The /reunion/ section landing. Lists every reunion YEAR (its child
+       sections) as a card, newest first — year, city, theme, and a link into the
+       year's page. The build-time featured reunion is badged (★ THIS YEAR when
+       upcoming, LATEST in the gap between cycles). Structure follows the wireframe
+       "Through the years" grid; brand follows the Final design system. */ -}}
+{{ define "main" }}
+{{- $sel := partial "featured-reunion.html" . -}}
+{{- $featured := $sel.featured -}}
+{{- $years := .Sections.ByDate.Reverse -}}
+
+{{- /* Flat text hero */ -}}
+<div class="flat-hero">
+  <div class="flat-hero__rule" aria-hidden="true"></div>
+  <div class="flat-hero__body container">
+    <div>
+      <p class="eyebrow flat-hero__eyebrow mb-1">Mullins Family Reunion &nbsp;·&nbsp; Every Year</p>
+      <h1>{{ .Title }}</h1>
+      <p class="flat-hero__lead">{{ .Content | plainify | default "One family. Many cities. Always the same table." }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  {{- with $years }}
+  <div class="row g-4">
+    {{- range . }}
+      {{- $isFeatured := and $featured (eq .RelPermalink $featured.RelPermalink) -}}
+      <div class="col-sm-6 col-lg-4">
+        <article class="reunion-card brand-card h-100">
+          {{- if $isFeatured }}
+            <span class="status-pill status-pill--year{{ if $sel.isUpcoming }} label-star{{ end }} reunion-card__badge">
+              {{ if $sel.isUpcoming }}Upcoming{{ else }}Latest{{ end }}
+            </span>
+          {{- end }}
+          <div class="reunion-card__year">{{ .Date.Format "2006" }}</div>
+          <div class="reunion-card__city">{{ .Params.city }}</div>
+          {{- with .Params.theme }}
+          <div class="reunion-card__meta"><span class="status-pill status-pill--place">{{ . }}</span></div>
+          {{- end }}
+          <a class="reunion-card__link stretched-link" href="{{ .RelPermalink }}">
+            {{ if $isFeatured }}View reunion &rarr;{{ else }}Photos &amp; recap &rarr;{{ end }}
+          </a>
+        </article>
+      </div>
+    {{- end }}
+  </div>
+  {{- else }}
+  <p class="text-secondary">Reunions will be listed here.</p>
+  {{- end }}
+</div>
+{{ end }}

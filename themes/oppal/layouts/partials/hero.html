@@ -10,37 +10,53 @@
        give it shape; the real look comes with the brand pass. */ -}}
 {{- $page := .page -}}
 {{- $isUpcoming := .isUpcoming -}}
-{{- with $page }}
+{{- with $page -}}
+{{- /* Three states: full-upcoming (date in future, details set) → dates + Register
+       + countdown; save-the-date (future but details TBD) → "Save the Date", no
+       countdown, email-list CTA; past/gap → "Archived", photos CTA. */ -}}
+{{- $saveDate := .Params.save_the_date -}}
+{{- $detailsReady := and $isUpcoming (not $saveDate) -}}
 <section class="reunion-hero py-5" aria-labelledby="hero-title">
   <div class="container">
-    <p class="hero-eyebrow text-uppercase mb-2">
-      {{ if $isUpcoming }}Upcoming Reunion{{ else }}Most Recent Reunion{{ end }}
+    <p class="hero-eyebrow eyebrow mb-2">
+      {{- if $saveDate }}<span class="label-star">Save the Date</span>
+      {{- else if $isUpcoming }}Upcoming Reunion
+      {{- else }}<span class="status-pill status-pill--archived">Past Reunion · Archived</span>{{ end }}
     </p>
     <h1 id="hero-title" class="hero-title mb-2">{{ .Title }}</h1>
 
     {{- with .Params.theme }}<p class="hero-theme lead mb-3">{{ . }}</p>{{ end }}
 
     <p class="hero-meta mb-4">
-      {{- $start := .Date -}}
-      {{- $end := .Params.end_date -}}
+      {{- /* Full date range only when dates are exact; otherwise a friendly
+             `dates_display` (e.g. "Summer 2028") or the year — no false precision. */ -}}
       <span class="hero-dates">
-        {{ $start.Format "January 2" }}{{ with $end }}–{{ (time .).Format "January 2, 2006" }}{{ else }}{{ $start.Format ", 2006" }}{{ end }}
+        {{- if .Params.dates_exact -}}
+          {{ .Date.Format "January 2" }}{{ with .Params.end_date }}&ndash;{{ (time .).Format "January 2, 2006" }}{{ else }}{{ $page.Date.Format ", 2006" }}{{ end }}
+        {{- else -}}
+          {{ or .Params.dates_display (.Date.Format "2006") }}
+        {{- end -}}
       </span>
       {{- with .Params.city }}<span class="hero-city"> · {{ . }}</span>{{ end }}
     </p>
 
+    {{- if $saveDate }}<p class="hero-note text-secondary mb-4">Dates &amp; details to be announced — join the email list and we'll let you know.</p>{{ end }}
+
     <div class="hero-actions d-flex flex-wrap gap-2">
-      {{- if $isUpcoming }}
+      {{- if $saveDate }}
+        <a class="btn btn-primary" href="{{ "/contact/" | relLangURL }}">Join the email list</a>
+        <a class="btn btn-view" href="{{ "/reunion/" | relLangURL }}">Explore past reunions</a>
+      {{- else if $detailsReady }}
         <a class="btn btn-primary" href="{{ (.GetPage "register").RelPermalink | default (printf "%sregister/" .RelPermalink) }}">Register</a>
-        <a class="btn btn-outline-secondary" href="{{ .RelPermalink }}">Reunion details</a>
+        <a class="btn btn-view" href="#overview">Reunion details</a>
       {{- else }}
-        <a class="btn btn-primary" href="{{ (.GetPage "photos").RelPermalink | default (printf "%sphotos/" .RelPermalink) }}">Relive the memories</a>
-        <a class="btn btn-outline-secondary" href="{{ .RelPermalink }}">Reunion details</a>
+        <a class="btn btn-primary" href="#photos">Relive the memories</a>
+        <a class="btn btn-view" href="#overview">Read the recap</a>
       {{- end }}
     </div>
 
-    {{- /* Live countdown is the one client-side exception; hidden in gap mode. */ -}}
-    {{- if $isUpcoming }}
+    {{- /* Live countdown — only for a full upcoming reunion (not save-the-date/gap). */ -}}
+    {{- if $detailsReady }}
       <div class="hero-countdown mt-4" data-countdown="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}" aria-live="polite"></div>
     {{- end }}
   </div>

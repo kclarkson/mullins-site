@@ -5,8 +5,17 @@
        Structure only. */ -}}
 {{- $p := . -}}
 <section class="quick-facts border-top border-bottom py-3" aria-label="Reunion quick facts">
+  {{- $isUpcoming := ge $p.Date now -}}
   <div class="container">
     <dl class="row mb-0">
+      {{- if $p.Params.save_the_date }}
+      {{- /* Save-the-date: minimal facts. The shared Location cell below shows the
+             city, so here we only add "When" (no register-by / venue / status). */ -}}
+      <div class="col-6 col-md">
+        <dt class="small text-uppercase">When</dt>
+        <dd class="mb-0">{{ or $p.Params.dates_display ($p.Date.Format "2006") }}</dd>
+      </div>
+      {{- else if $p.Params.dates_exact }}
       <div class="col-6 col-md">
         <dt class="small text-uppercase">Starts</dt>
         <dd class="mb-0">{{ $p.Date.Format "Mon, Jan 2, 2006" }}</dd>
@@ -15,6 +24,12 @@
       <div class="col-6 col-md">
         <dt class="small text-uppercase">Ends</dt>
         <dd class="mb-0">{{ (time .).Format "Mon, Jan 2, 2006" }}</dd>
+      </div>
+      {{- end }}
+      {{- else }}
+      <div class="col-6 col-md">
+        <dt class="small text-uppercase">Year</dt>
+        <dd class="mb-0">{{ $p.Date.Format "2006" }}</dd>
       </div>
       {{- end }}
       {{- with $p.Params.city }}
@@ -29,12 +44,12 @@
         <dd class="mb-0">{{ . }}</dd>
       </div>
       {{- end }}
-      {{- with $p.Params.register_deadline }}
+      {{- if $isUpcoming }}{{ with $p.Params.register_deadline }}
       <div class="col-6 col-md">
         <dt class="small text-uppercase">Register by</dt>
         <dd class="mb-0">{{ (time .).Format "Jan 2, 2006" }}</dd>
       </div>
-      {{- end }}
+      {{- end }}{{ end }}
     </dl>
   </div>
 </section>

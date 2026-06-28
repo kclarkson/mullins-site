@@ -10,6 +10,10 @@
        content where the real copy/design lands later. */ -}}
 {{ define "main" }}
 {{- $isUpcoming := ge .Date now -}}
+{{- /* save-the-date = future reunion whose details aren't set yet; detailsReady =
+       a full upcoming reunion (registration/schedule/travel can show). */ -}}
+{{- $saveDate := .Params.save_the_date -}}
+{{- $detailsReady := and $isUpcoming (not $saveDate) -}}
 
 {{- /* 1. Hero */ -}}
 {{ partial "hero.html" (dict "page" . "isUpcoming" $isUpcoming) }}
@@ -24,13 +28,17 @@
   <div class="row">
     <div class="col-lg-8">
 
-      {{- /* 3. Overview */ -}}
+      {{- /* 3. Overview / recap / save-the-date */ -}}
       <section id="overview" class="reunion-section mb-5" aria-labelledby="overview-h">
-        <h2 id="overview-h">Overview</h2>
+        <h2 id="overview-h">{{ if $saveDate }}Save the date{{ else if $isUpcoming }}Overview{{ else }}Looking back{{ end }}</h2>
         <div class="content">{{ .Content }}</div>
+        {{- if $saveDate }}
+        <p class="mt-3"><a class="btn btn-primary" href="{{ "/contact/" | relLangURL }}">Get notified &mdash; join the email list</a></p>
+        {{- end }}
       </section>
 
-      {{- /* 4. Registration */ -}}
+      {{- /* 4. Registration — full upcoming only (retires once over / not yet open). */ -}}
+      {{- if $detailsReady }}
       <section id="registration" class="reunion-section mb-5" aria-labelledby="registration-h">
         <h2 id="registration-h">Registration</h2>
         {{- with .GetPage "register" }}
@@ -40,15 +48,19 @@
           <p class="text-secondary">Registration details coming soon.</p>
         {{- end }}
       </section>
+      {{- end }}
 
-      {{- /* 5. Schedule preview */ -}}
+      {{- /* 5. Schedule preview — only when there's schedule data (or full upcoming). */ -}}
+      {{- if or $detailsReady .Params.schedule }}
       <section id="schedule" class="reunion-section mb-5" aria-labelledby="schedule-h">
-        <h2 id="schedule-h">Schedule</h2>
+        <h2 id="schedule-h">{{ if $isUpcoming }}Schedule{{ else }}How the weekend went{{ end }}</h2>
         {{ partial "schedule.html" . }}
         {{- with .GetPage "schedule" }}<p class="mt-3"><a href="{{ .RelPermalink }}">Full schedule</a></p>{{ end }}
       </section>
+      {{- end }}
 
-      {{- /* 6. Travel & Lodging */ -}}
+      {{- /* 6. Travel & Lodging — full upcoming only (hidden on past / save-the-date). */ -}}
+      {{- if $detailsReady }}
       <section id="travel" class="reunion-section mb-5" aria-labelledby="travel-h">
         <h2 id="travel-h">Travel &amp; Lodging</h2>
         {{- with .GetPage "travel" }}
@@ -58,20 +70,33 @@
           <p class="text-secondary">Travel details coming soon.</p>
         {{- end }}
       </section>
+      {{- end }}
 
-      {{- /* 7. FAQ */ -}}
+      {{- /* 7. FAQ — only when there are entries (or full upcoming). */ -}}
+      {{- if or $detailsReady .Params.faq }}
       <section id="faq" class="reunion-section mb-5" aria-labelledby="faq-h">
         <h2 id="faq-h">FAQ</h2>
         {{ partial "faq.html" . }}
       </section>
+      {{- end }}
 
-      {{- /* 8. Photos & memories */ -}}
+      {{- /* 8. Photos & memories — both states; past reunions surface legacy albums. */ -}}
       <section id="photos" class="reunion-section mb-5" aria-labelledby="photos-h">
         <h2 id="photos-h">Photos &amp; Memories</h2>
         {{- with .GetPage "photos" }}
           <p><a href="{{ .RelPermalink }}">View the gallery</a></p>
         {{- else }}
-          <p class="text-secondary">Photos will be posted here.</p>
+          {{- $albums := where (default (slice) .Params.legacy_albums) "url" "!=" "" }}
+          {{- with $albums }}
+          <p class="text-secondary">Photos from this reunion (legacy albums — being migrated):</p>
+          <ul>
+            {{- range . }}
+            <li><a href="{{ .url }}" rel="noopener" target="_blank">{{ .label }}</a>{{ if eq .status "verify" }} <span class="text-secondary small">(link to verify)</span>{{ end }}</li>
+            {{- end }}
+          </ul>
+          {{- else }}
+          <p class="text-secondary">{{ if $isUpcoming }}Photos will be here after the reunion.{{ else }}Photos will be posted here.{{ end }}</p>
+          {{- end }}
         {{- end }}
       </section>
 

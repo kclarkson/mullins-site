@@ -1,33 +1,58 @@
-{{- /* themes/oppal/layouts/partials/footer.html — footer chrome + JS pipeline.
-       Secondary actions (sitemap, donate, email signup, social icons) are sourced
-       from data/site.yaml and the main menu; each piece self-hides when empty. */ -}}
+{{- /* themes/oppal/layouts/partials/footer.html — dark global footer.
+
+       Matches the brand mockup's footer: brand + blurb + social, an Explore
+       column, and a newsletter / contact-organizers column, over a thin
+       copyright bar. Secondary content (social, donate, email signup) is sourced
+       from data/site.yaml and the main menu; each piece self-hides when empty.
+       The donate column carries id="support" so the header heart can jump to it. */ -}}
+{{- $sel := partial "featured-reunion.html" . -}}
+{{- $footerCity := "" -}}
+{{- with $sel.featured }}{{ $footerCity = .Params.city }}{{ end -}}
 <footer class="site-footer mt-auto pt-5 pb-4">
   <div class="container">
     <div class="row g-4">
-      <div class="col-md-4">
-        <p class="fw-semibold mb-2">{{ site.Title }}</p>
-        {{- with site.Params.description }}<p class="text-secondary small">{{ . }}</p>{{ end }}
+      {{- /* Brand + blurb + social. */ -}}
+      <div class="col-lg-4">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          {{ partial "logo.html" (dict "size" 30) }}
+          <span class="footer-brand fs-5">MULLINS REUNION</span>
+        </div>
+        {{- with or site.Params.tagline site.Params.description }}<p class="footer-blurb small mb-3">{{ . }}</p>{{ end }}
         {{ partial "social-icons.html" . }}
       </div>
-      <div class="col-md-4">
-        <h2 class="h6 text-uppercase">Explore</h2>
+
+      {{- /* Explore: the main menu. */ -}}
+      <div class="col-6 col-lg-3">
+        <p class="footer-label mb-2">Explore</p>
         <ul class="list-unstyled mb-0">
           {{- range site.Menus.main }}
-          <li class="mb-1"><a class="link-secondary" href="{{ .URL | relLangURL }}">{{ .Name }}</a></li>
+          <li class="mb-1"><a href="{{ .URL | relLangURL }}">{{ .Name }}</a></li>
           {{- end }}
         </ul>
       </div>
-      <div class="col-md-4">
-        {{ partial "donate.html" . }}
-        {{- if templates.Exists "partials/email-signup.html" }}
-          <div class="mt-3">{{ partial "email-signup.html" . }}</div>
+
+      {{- /* Newsletter + contact + support. */ -}}
+      <div class="col-lg-5 footer-newsletter">
+        <p class="footer-label mb-2">Join the family newsletter</p>
+        <p class="footer-blurb small mb-3">Reunion news &amp; photos, to your inbox.</p>
+        {{- if and site.Params.emailFormId (templates.Exists "partials/email-signup.html") }}
+          {{ partial "email-signup.html" . }}
         {{- else }}
-          <p class="mt-3 mb-0"><a class="link-secondary" href="{{ "/contact/" | relLangURL }}">Join the email list</a></p>
+          {{- /* MailerLite is wired in Phase 5; until then, an honest CTA. */ -}}
+          <a class="btn btn-gold btn-sm mb-3" href="{{ "/contact/" | relLangURL }}">Join the email list</a>
         {{- end }}
+        <div>
+          <a class="btn btn-contact-organizers btn-sm" href="{{ "/contact/" | relLangURL }}">&#9993; Contact organizers</a>
+        </div>
+        {{- /* Ways to give — anchor target for the header heart. */ -}}
+        <div id="support" class="mt-3">{{ partial "donate.html" . }}</div>
       </div>
     </div>
-    <hr>
-    <p class="mb-0 text-secondary small">&copy; {{ now.Year }} {{ site.Title }}.</p>
+
+    <div class="footer-divider mt-4 pt-3 d-flex flex-wrap justify-content-between footer-copy">
+      <span>&copy; {{ now.Year }} {{ site.Title }}.</span>
+      {{- with $footerCity }}<span>{{ . }}</span>{{ end }}
+    </div>
   </div>
 </footer>
 

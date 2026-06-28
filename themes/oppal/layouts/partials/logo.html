@@ -1,0 +1,16 @@
+{{- /* themes/oppal/layouts/partials/logo.html — the Mullins double-ring "M" mark.
+
+       Reusable inline SVG: crimson outer ring, gold inner ring, Zilla Slab "M".
+       Colours come from the brand tokens (currentColor is not used because the
+       two rings differ). Pass an optional size with:
+         {{ partial "logo.html" (dict "size" 27) }}
+       Defaults to 28px. Decorative when paired with a text wordmark, so it is
+       aria-hidden; the accessible name comes from the surrounding link/wordmark. */ -}}
+{{- $size := or .size 28 -}}
+<svg class="brand-logo__ring" viewBox="0 0 240 240" width="{{ $size }}" height="{{ $size }}"
+     role="img" aria-hidden="true" focusable="false">
+  <circle cx="120" cy="120" r="112" fill="none" stroke="var(--brand-primary)" stroke-width="12"></circle>
+  <circle cx="120" cy="120" r="90" fill="none" stroke="var(--brand-secondary)" stroke-width="6"></circle>
+  <text x="120" y="171" text-anchor="middle" fill="var(--brand-primary)"
+        style="font-family:var(--font-display);font-weight:700;font-size:150px">M</text>
+</svg>

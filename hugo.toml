@@ -27,6 +27,9 @@ buildFuture = true
 
 [params]
   description = 'The home of the Mullins Family Reunion — history, news, and the next gathering.'
+  # Brand tagline from the Final design system (voice line). Used as the footer
+  # blurb; kept separate from the SEO `description`.
+  tagline = 'One family. Many cities. Always the same table.'
   # Service IDs — collected once and set here (or in Netlify env). Empty until
   # provided; the partials that use them are wired in later phases. Params are
   # named by FUNCTION, not vendor, so swapping a service never renames the param;

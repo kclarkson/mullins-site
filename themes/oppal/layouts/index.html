@@ -50,6 +50,8 @@
 
   {{- /* 2. Upcoming-reunion highlight — key facts + CTA for the featured year. */ -}}
   {{- with $sel.featured }}
+  {{- $saveDate := .Params.save_the_date -}}
+  {{- $detailsReady := and $sel.isUpcoming (not $saveDate) -}}
   <section class="home-section py-5 border-top" aria-labelledby="home-reunion-h">
     <h2 id="home-reunion-h" class="h3 mb-4">
       {{ if $sel.isUpcoming }}The next gathering{{ else }}Our most recent reunion{{ end }}
@@ -59,9 +61,13 @@
         <p class="h4 mb-1">{{ .Title }}</p>
         {{- with .Params.theme }}<p class="text-secondary mb-3">{{ . }}</p>{{ end }}
         <dl class="row mb-0">
-          <dt class="col-sm-4">Dates</dt>
+          <dt class="col-sm-4">{{ if $saveDate }}When{{ else }}Dates{{ end }}</dt>
           <dd class="col-sm-8">
-            {{ .Date.Format "January 2" }}{{ with .Params.end_date }}–{{ (time .).Format "January 2, 2006" }}{{ else }}{{ .Date.Format ", 2006" }}{{ end }}
+            {{- if .Params.dates_exact -}}
+              {{ .Date.Format "January 2" }}{{ with .Params.end_date }}–{{ (time .).Format "January 2, 2006" }}{{ else }}{{ .Date.Format ", 2006" }}{{ end }}
+            {{- else -}}
+              {{ or .Params.dates_display (.Date.Format "2006") }}
+            {{- end -}}
           </dd>
           {{- with .Params.city }}<dt class="col-sm-4">Location</dt><dd class="col-sm-8">{{ . }}</dd>{{ end }}
           {{- with (or .Params.venue .Params.hotel) }}<dt class="col-sm-4">Venue</dt><dd class="col-sm-8">{{ . }}</dd>{{ end }}
@@ -69,12 +75,14 @@
       </div>
       <div class="col-md-5">
         <div class="d-flex flex-column gap-2">
-          {{- if $sel.isUpcoming }}
+          {{- if $saveDate }}
+            <a class="btn btn-primary" href="{{ "/contact/" | relLangURL }}">Join the email list</a>
+          {{- else if $detailsReady }}
             <a class="btn btn-primary" href="{{ (.GetPage "register").RelPermalink | default (printf "%sregister/" .RelPermalink) }}">Register now</a>
           {{- else }}
             <a class="btn btn-primary" href="{{ (.GetPage "photos").RelPermalink | default (printf "%sphotos/" .RelPermalink) }}">See the photos</a>
           {{- end }}
-          <a class="btn btn-outline-secondary" href="{{ .RelPermalink }}">Full reunion details</a>
+          <a class="btn btn-view" href="{{ .RelPermalink }}">Full reunion details</a>
         </div>
       </div>
     </div>

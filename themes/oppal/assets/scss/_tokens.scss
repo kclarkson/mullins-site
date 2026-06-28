@@ -1,27 +1,94 @@
-// _tokens.scss — brand tokens for the oppal theme.
+// _tokens.scss — Mullins brand tokens for the oppal theme.
 //
 // These override Bootstrap's own Sass variables, so this file MUST be imported
 // BEFORE Bootstrap in main.scss. This is the payoff of the SCSS route over a CDN:
 // brand decisions flow into Bootstrap's components, not just bolted on after.
 //
-// PLACEHOLDER PALETTE. The real Mullins palette + fonts are an open brand
-// decision (build-plan §10.6 / oppal-plan §7.1). Swap these values when the
-// brand is locked — nothing else in the theme hardcodes a colour or font.
+// Source of truth: /.siteproject/tokens.css (extracted from the brand mockup,
+// design/Mullins Mockups - Brand Typeset.html). Keep the :root block below in
+// sync with that file. Raw hex lives ONLY here and in tokens.css — nowhere else.
 
-// --- Colour ------------------------------------------------------------------
-$primary:    #2f5d50; // placeholder evergreen
-$secondary:  #6c757d;
-$body-color: #1f2933;
+// --- Brand role custom properties (mirror of .siteproject/tokens.css) --------
+// Exposed for the custom components in _components.scss and any inline use.
+:root {
+  --brand-primary: #9E1B32;        // Crimson (Alabama) — design system canonical
+  --brand-primary-dark: #6E1422;   // Maroon — deep / hover (design system canonical)
+  --brand-secondary: #C2922A;      // Gold (Opp Bobcats) — accent
+  --brand-gold-soft: #E9CF86;      // Wheat — gold tint
+  --brand-accent: #A8472A;         // terracotta — NOT in the Final palette; mockup-only,
+                                   // used for the big year numeral. Pending review.
+
+  --brand-ink: #221C17;            // Ink — text
+  --brand-ink-2: #1C1916;
+  --brand-paper: #FFFFFF;
+
+  // Canonical surfaces (design system): Panel = cards, Cream = warm panel.
+  --brand-panel: #EFE2C6;          // Panel — cards
+  --brand-cream-2: #F3E8D0;        // Cream — warm panel
+  --brand-cream: #FBF6E9;          // lighter working tint (mockup section bg; off the named palette)
+  --brand-sand: #EFE2C6;           // alias of --brand-panel (image/placeholder fill)
+  --brand-sand-soft: #E7DFCF;
+
+  --brand-line: #D8C29A;
+  --brand-line-2: #E0CEA6;
+  --brand-line-3: #DDD6CC;
+
+  --brand-muted: #8A7C68;
+  --brand-text-2: #4A4038;
+
+  // (No brand green: the Final palette is crimson/gold/cream/ink only. Bootstrap
+  //  keeps its own default green strictly for functional form validation.)
+  --brand-tag: #7A6A58;
+  --brand-blush: #E0B4A3;
+
+  --brand-footer-bg: #221C17;
+  --brand-footer-line: #3A322A;
+  --brand-footer-text: #C9BBA2;
+  --brand-footer-muted: #9A8C72;
+
+  --font-display: "Zilla Slab", Georgia, serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+// --- Colour: Bootstrap variable overrides -----------------------------------
+$primary:    #9E1B32; // crimson — drives .btn-primary, links
+$secondary:  #8A7C68; // warm taupe — .text-secondary / muted UI text
+$light:      #F3E8D0; // Cream (warm panel) — .bg-light section backgrounds
+$dark:       #221C17; // ink — .bg-dark, the footer
+// $success is left at Bootstrap's default (functional form validation only) —
+// the Final brand palette has no green.
+
+$body-color: #221C17;
 $body-bg:    #ffffff;
 
+$border-color: #D8C29A; // tan — default card/section borders
+
 // --- Typography --------------------------------------------------------------
-// System stack placeholder until the project's display/body fonts are wired
-// (the project sets fonts in project.md; the skeleton stays dependency-free).
-$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto,
-  "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-  "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+// Three Mullins families. Loaded in partials/head.html (Google Fonts + preconnect).
+$font-family-base:       "Source Serif 4", Georgia, serif;
+$font-family-monospace:  "Space Mono", ui-monospace, SFMono-Regular, monospace;
+$headings-font-family:   "Zilla Slab", Georgia, serif;
+$headings-font-weight:   700;
+$headings-color:         #221C17;
+
+// Type scale from the Final design system: 64 / 40 / 28 / 21 / 16 / 13.
+// Bootstrap applies RFS, so these desktop maxima scale down on small screens.
+$font-size-base:  1rem;        // 16px Body
+$h1-font-size:    4rem;        // 64 H1
+$h2-font-size:    2.5rem;      // 40 H2
+$h3-font-size:    1.75rem;     // 28 H3
+$h4-font-size:    1.375rem;    // 22 (between H3 and Lead)
+$h5-font-size:    1.125rem;    // 18
+$h6-font-size:    1rem;        // 16
+$lead-font-size:  1.3125rem;   // 21 Lead
+$small-font-size: .8125rem;    // 13 Caption
 
 // --- Shape & links -----------------------------------------------------------
 $border-radius:         .5rem;
+$border-radius-sm:      .375rem;
+$border-radius-lg:      .75rem;
+$link-color:            #9E1B32;
+$link-hover-color:      #6E1422; // Maroon (design system canonical)
 $link-decoration:       none;
 $link-hover-decoration: underline;
