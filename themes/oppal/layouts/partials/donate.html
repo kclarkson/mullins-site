@@ -4,7 +4,7 @@
        renders only when it has a value, so partial data won't show empty rows, and
        the whole block renders nothing if no destinations are set. Used on the home
        page, the footer, and (optionally) reunion pages. Structure only. */ -}}
-{{- with site.Data.site.donate }}
+{{- with hugo.Data.site.donate }}
 {{- $hasCheck := and .check (or .check.payable_to .check.address) -}}
 {{- if or .cashapp .paypal $hasCheck }}
 <div class="donate">

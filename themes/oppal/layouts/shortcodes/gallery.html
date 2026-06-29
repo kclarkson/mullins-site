@@ -1,0 +1,23 @@
+{{- /* themes/oppal/layouts/shortcodes/gallery.html — curated photo gallery.
+
+       Renders the page's image resources (in a leaf bundle) as the brand masonry
+       grid — first image leads at 2×2. With no images yet, it draws a placeholder
+       grid so the section still reads as intentional. Editors just drop images in
+       the page bundle; pass placeholder="N" to size the empty-state grid.
+       Params: placeholder (optional int, default 7). */ -}}
+{{- $images := .Page.Resources.Match "{*.jpg,*.jpeg,*.png,*.webp}" -}}
+{{- $n := int (.Get "placeholder" | default 7) -}}
+<div class="gallery-grid">
+  {{- if $images }}
+    {{- range $i, $img := $images }}
+    <a class="gallery-grid__item gallery-photo{{ if eq $i 0 }} gallery-grid__item--lead{{ end }}"
+       href="{{ $img.RelPermalink }}" style="background-image:url('{{ $img.RelPermalink }}')">
+      <span class="visually-hidden">Photo {{ add $i 1 }}</span>
+    </a>
+    {{- end }}
+  {{- else }}
+    {{- range seq $n }}
+    <div class="gallery-grid__item{{ if eq . 1 }} gallery-grid__item--lead{{ end }}" aria-hidden="true"></div>
+    {{- end }}
+  {{- end }}
+</div>

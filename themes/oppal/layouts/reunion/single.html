@@ -1,0 +1,55 @@
+{{- /* themes/oppal/layouts/reunion/single.html — reunion SUBPAGE wrapper.
+
+       Reunion subpages (register, schedule, travel, photos, faq) resolve to type
+       "reunion" and land here. Every subpage gets the flat-hero (title + big year +
+       breadcrumb eyebrow) and the parent year's sticky section menu, then a
+       per-subpage body dispatched by file name:
+         schedule -> the parent year's date-card timeline
+         register -> the Netlify RSVP form (+ fees/payment prose)
+         travel   -> host hotel + locations + getting-there (travel-detail)
+         else     -> the page's own Markdown. */ -}}
+{{ define "main" }}
+{{- $year := .Parent -}}
+{{- $sub := .File.BaseFileName -}}
+
+<div class="flat-hero">
+  <div class="flat-hero__rule" aria-hidden="true"></div>
+  <div class="flat-hero__body container">
+    <div>
+      <p class="eyebrow flat-hero__eyebrow mb-1">{{ with $year }}{{ .Title }}{{ else }}Mullins Family Reunion{{ end }}</p>
+      <h1>{{ .Title }}</h1>
+      {{- with .Description }}<p class="flat-hero__lead">{{ . }}</p>{{ end }}
+    </div>
+    {{- with $year }}<div class="flat-hero__year"><a href="{{ .RelPermalink }}">{{ .Date.Format "2006" }}</a></div>{{ end }}
+  </div>
+</div>
+
+{{- with $year }}{{ partial "reunion-subnav.html" . }}{{ end }}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+
+      {{- if eq $sub "schedule" }}
+        {{- with $year }}
+          {{- if .Params.schedule }}{{ partial "schedule.html" . }}
+          {{- else }}<p class="text-secondary">Full schedule coming soon.</p>{{ end }}
+        {{- end }}
+        {{- with .Content }}<div class="content mt-4">{{ . }}</div>{{ end }}
+
+      {{- else if eq $sub "register" }}
+        {{ partial "rsvp-form.html" $year }}
+        {{- with .Content }}<div class="content mt-5">{{ . }}</div>{{ end }}
+
+      {{- else if eq $sub "travel" }}
+        {{ partial "travel-detail.html" . }}
+        {{- with .Content }}<div class="content mt-4">{{ . }}</div>{{ end }}
+
+      {{- else }}
+        <div class="content">{{ .Content }}</div>
+      {{- end }}
+
+    </div>
+  </div>
+</div>
+{{ end }}

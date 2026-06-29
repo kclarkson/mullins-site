@@ -4,7 +4,7 @@
        block stays hidden until the family supplies links. Each link is labelled and
        opens in a new tab with rel="noopener". The `.social-link` hook lets the brand
        pass drop in real icons later. Structure only. */ -}}
-{{- $links := where (default (slice) site.Data.site.social) "url" "!=" "" -}}
+{{- $links := where (default (slice) hugo.Data.site.social) "url" "!=" "" -}}
 {{- with $links }}
 <ul class="social-icons list-inline mb-0" aria-label="Social media">
   {{- range . }}

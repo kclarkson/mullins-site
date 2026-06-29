@@ -1,0 +1,61 @@
+{{- /* themes/oppal/layouts/partials/travel-detail.html — host hotel + locations +
+       getting-there (mockup §1.6). Context: the travel SUBPAGE. Host hotel reads
+       the parent year's hotel/rate; locations and getting-there come from this
+       page's structured front matter, so the theme stays generic. */ -}}
+{{- $travel := . -}}
+{{- $year := .Parent -}}
+
+<section class="reunion-section">
+  <h2 class="reunion-section__title">Host hotel</h2>
+  <div class="brand-card host-hotel">
+    <div class="host-hotel__media" aria-hidden="true"></div>
+    <div class="host-hotel__body">
+      {{- with $year }}
+      <h3 class="host-hotel__name">{{ .Params.hotel }}</h3>
+      <p class="host-hotel__meta">
+        {{- with .Params.hotel_rate }}{{ . }}{{ end }}
+        {{- with $travel.Params.hotel_booking_note }} · {{ . }}{{ end }}
+      </p>
+      {{- end }}
+      {{- with $travel.Params.hotel_phone }}<p class="mb-2">Reservations: <a href="tel:{{ . | replaceRE "[^0-9]" "" }}">{{ . }}</a></p>{{ end }}
+      {{- with $travel.Params.hotel_booking_url }}<a class="btn btn-primary btn-sm" href="{{ . }}" rel="noopener">Book your room &rarr;</a>{{ end }}
+    </div>
+  </div>
+</section>
+
+{{- with $travel.Params.locations }}
+<section class="reunion-section">
+  <h2 class="reunion-section__title">Where everything happens</h2>
+  <div class="location-cards">
+    {{- range . }}
+    <div class="brand-card location-card">
+      <div class="location-card__head">
+        <span class="location-card__pin" aria-hidden="true">📍</span>
+        <span class="location-card__name">{{ .name }}</span>
+        {{- with .tag }}<span class="status-pill status-pill--year">{{ . }}</span>{{ end }}
+      </div>
+      {{- with .address }}
+      <p class="location-card__addr">{{ . }}
+        <a class="location-card__map" href="https://www.google.com/maps/search/?api=1&amp;query={{ . | urlquery }}" rel="noopener" target="_blank">Map &rarr;</a>
+      </p>
+      {{- end }}
+    </div>
+    {{- end }}
+  </div>
+</section>
+{{- end }}
+
+{{- with $travel.Params.getting_there }}
+<section class="reunion-section">
+  <h2 class="reunion-section__title">Getting there</h2>
+  <div class="getting-there">
+    {{- range . }}
+    <div class="brand-card getting-there__card">
+      <span class="getting-there__icon" aria-hidden="true">{{ .icon }}</span>
+      <h3 class="getting-there__title">{{ .title }}</h3>
+      <p class="mb-0 text-secondary">{{ .text }}</p>
+    </div>
+    {{- end }}
+  </div>
+</section>
+{{- end }}

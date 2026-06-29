@@ -1,0 +1,19 @@
+{{- /* themes/oppal/layouts/partials/email-signup.html — newsletter signup.
+
+       Function-named (not vendor-named): when `emailFormId` is set in hugo.toml
+       params it drops in the MailerLite embed; until then it falls back to a
+       Netlify-backed form so signups already work. Honeypot + real label. The
+       Netlify form is named "newsletter" (one per site — Netlify dedupes by name). */ -}}
+{{- with site.Params.emailFormId }}
+<div class="email-signup ml-embedded" data-form="{{ . }}"></div>
+{{- else }}
+<form name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="email-signup">
+  <input type="hidden" name="form-name" value="newsletter">
+  <p class="d-none"><label>Skip if you're human: <input name="bot-field"></label></p>
+  <label class="visually-hidden" for="news-email">Email address</label>
+  <div class="input-group">
+    <input class="form-control" id="news-email" name="email" type="email" placeholder="your@email.com" required>
+    <button class="btn btn-primary" type="submit">Subscribe</button>
+  </div>
+</form>
+{{- end }}

@@ -1,0 +1,61 @@
+{{- /* themes/oppal/layouts/partials/rsvp-form.html — Netlify RSVP form.
+
+       Context: the reunion YEAR page (for the per-year form name). Submit-only —
+       no payment, no order summary (locked decision). Netlify Forms picks this up
+       at build time from data-netlify + the hidden form-name; the honeypot field
+       deters bots. Real <label>s for every field. */ -}}
+{{- $p := . -}}
+{{- $name := printf "rsvp-%s" ($p.Date.Format "2006") -}}
+<form name="{{ $name }}" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="rsvp-form brand-card">
+  <input type="hidden" name="form-name" value="{{ $name }}">
+  <p class="d-none"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+
+  <div class="rsvp-form__section">
+    <h2 class="rsvp-form__legend">Your household</h2>
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" for="rsvp-household">Household / family name</label>
+        <input class="form-control" id="rsvp-household" name="household" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label" for="rsvp-count">How many attending</label>
+        <input class="form-control" id="rsvp-count" name="attending_count" type="number" min="1" value="1" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label" for="rsvp-email">Email</label>
+        <input class="form-control" id="rsvp-email" name="email" type="email" required>
+      </div>
+    </div>
+  </div>
+
+  <div class="rsvp-form__section">
+    <h2 class="rsvp-form__legend">Who's coming</h2>
+    <label class="form-label" for="rsvp-attendees">Attendees &amp; ages</label>
+    <textarea class="form-control" id="rsvp-attendees" name="attendees" rows="4"
+      placeholder="One per line — e.g.&#10;Darryl Mullins (adult)&#10;Aryana (12+)&#10;Baby M (under 5)"></textarea>
+    <div class="form-text">Ages help us plan meals and t-shirts.</div>
+  </div>
+
+  <div class="rsvp-form__section">
+    <h2 class="rsvp-form__legend">Extras</h2>
+    <label class="form-label" for="rsvp-tshirts">T-shirt sizes</label>
+    <input class="form-control" id="rsvp-tshirts" name="tshirts" placeholder="e.g. 2 × L, 1 × XL, 1 × Youth M">
+    <span class="form-label d-block mt-3">Saturday lunch (Chef FLii catering)</span>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="catering" id="rsvp-cat-yes" value="yes" checked>
+      <label class="form-check-label" for="rsvp-cat-yes">Count us in</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="catering" id="rsvp-cat-no" value="no">
+      <label class="form-check-label" for="rsvp-cat-no">We'll sit this one out</label>
+    </div>
+  </div>
+
+  <div class="rsvp-form__section">
+    <label class="form-label" for="rsvp-notes">Anything else?</label>
+    <textarea class="form-control" id="rsvp-notes" name="notes" rows="2"></textarea>
+  </div>
+
+  <button class="btn btn-primary" type="submit">Submit RSVP</button>
+  <p class="text-secondary small mt-2 mb-0">No payment here — we'll follow up about assessment fees and how to pay.</p>
+</form>

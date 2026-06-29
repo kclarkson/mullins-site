@@ -96,7 +96,7 @@
           </div>
           {{- $past := slice }}
           {{- with site.GetPage "/reunion" }}{{ range .Sections.ByDate.Reverse }}{{ if .Date.Before now }}{{ $past = $past | append . }}{{ end }}{{ end }}{{ end }}
-          {{- with first 8 $past }}
+          {{- with first 3 $past }}
           <div class="years-strip">
             {{- range . }}
             <a class="years-strip__item" href="{{ .RelPermalink }}" aria-label="{{ .Date.Format "2006" }} — {{ .Params.city }}">
@@ -117,7 +117,7 @@
           <p class="eyebrow">Stay connected</p>
           <h2 class="h5 mb-2">Join the email list</h2>
           <p class="text-secondary mb-3">Reunion news &amp; photos, straight to your inbox.</p>
-          <a class="btn btn-primary btn-sm mosaic-tile__link mt-auto" href="{{ "/contact/" | relLangURL }}">Subscribe</a>
+          {{ partial "email-signup.html" . }}
         </div>
       </article>
 

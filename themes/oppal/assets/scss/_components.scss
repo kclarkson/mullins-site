@@ -315,15 +315,16 @@
   color: var(--brand-primary);
 }
 
-// "Through the years" — a 4-up grid of labeled year cards (photo + caption).
-.years-strip { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
-@include media-breakpoint-up(md) { .years-strip { grid-template-columns: repeat(4, 1fr); } }
+// "Through the years" — last 3 reunions as labeled year cards (photo + caption).
+// Single column on mobile, 3-up from md and up.
+.years-strip { display: grid; grid-template-columns: 1fr; gap: .75rem; }
+@include media-breakpoint-up(md) { .years-strip { grid-template-columns: repeat(3, 1fr); } }
 .years-strip__item {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  height: 6.5rem;
+  height: 15rem;
   border-radius: $border-radius-sm;
   overflow: hidden;
   text-decoration: none;
@@ -410,7 +411,7 @@
 .brand-logo__word {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 2.5rem;
   letter-spacing: .02em;
   color: var(--brand-ink);
   line-height: 1;
@@ -702,3 +703,96 @@
   .gallery-grid__item--lead { grid-column: span 2; grid-row: span 2; }
 }
 .gallery-grid__item { min-height: 90px; border-radius: $border-radius-sm; @include brand-crosshatch(16px); }
+
+// ===========================================================================
+// Reunion subpages — flat-hero year link, RSVP form, host hotel, location
+// cards, getting-there (mockup §1.4–1.6).
+// ===========================================================================
+
+.flat-hero__year a { color: inherit; text-decoration: none; }
+.flat-hero__year a:hover,
+.flat-hero__year a:focus { color: var(--brand-primary); }
+
+// RSVP form (Netlify, submit-only).
+.rsvp-form { padding: 1.5rem 1.6rem; }
+.rsvp-form__section { padding-block: 1.1rem; border-bottom: 1px solid var(--brand-line-2); }
+.rsvp-form__section:first-of-type { padding-top: 0; }
+.rsvp-form__section:last-of-type { border-bottom: 0; padding-bottom: 0; }
+.rsvp-form__legend { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; margin-bottom: .75rem; }
+.rsvp-form .form-label { font-weight: 600; font-size: .9rem; }
+.rsvp-form .form-control {
+  background-color: var(--brand-cream);
+  border: 1.5px solid var(--brand-line);
+}
+.rsvp-form .form-control:focus {
+  background-color: #fff;
+  border-color: var(--brand-primary);
+  box-shadow: none;
+}
+
+// Host hotel feature.
+.host-hotel { display: flex; flex-wrap: wrap; overflow: hidden; }
+.host-hotel__media { flex: 1 1 12rem; min-height: 9rem; @include brand-crosshatch(20px); }
+.host-hotel__body { flex: 2 1 16rem; padding: 1.25rem 1.4rem; }
+.host-hotel__name { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; margin-bottom: .35rem; }
+.host-hotel__meta { color: var(--brand-text-2); margin-bottom: .6rem; }
+
+// Location cards.
+.location-cards { display: grid; gap: .85rem; grid-template-columns: 1fr; }
+@include media-breakpoint-up(md) { .location-cards { grid-template-columns: repeat(3, 1fr); } }
+.location-card { padding: 1rem 1.1rem; }
+.location-card__head { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .4rem; }
+.location-card__name { font-weight: 600; }
+.location-card__addr { font-size: .9rem; color: var(--brand-text-2); margin-bottom: 0; }
+.location-card__map {
+  display: inline-block;
+  margin-left: .4rem;
+  color: var(--brand-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--brand-blush);
+}
+
+// Getting there.
+.getting-there { display: grid; gap: .85rem; grid-template-columns: 1fr; }
+@include media-breakpoint-up(md) { .getting-there { grid-template-columns: repeat(3, 1fr); } }
+.getting-there__card { padding: 1.1rem 1.2rem; text-align: center; }
+.getting-there__icon { display: block; font-size: 1.6rem; margin-bottom: .4rem; }
+.getting-there__title { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; margin-bottom: .35rem; }
+
+// ===========================================================================
+// Supporting components — FAQ accordion, email signup, gallery photos, prose.
+// ===========================================================================
+
+// FAQ accordion — brand surfaces (crimson active title, tan borders).
+.faq-accordion .accordion-item { border-color: var(--brand-line); }
+.faq-accordion .accordion-button {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--brand-ink);
+  background-color: var(--brand-cream);
+}
+.faq-accordion .accordion-button:not(.collapsed) {
+  color: var(--brand-primary);
+  background-color: var(--brand-cream);
+  box-shadow: inset 0 -1.5px 0 var(--brand-line);
+}
+.faq-accordion .accordion-button:focus {
+  border-color: var(--brand-line);
+  box-shadow: none;
+}
+
+// Email signup.
+.email-signup .form-control {
+  background-color: var(--brand-paper);
+  border: 1.5px solid var(--brand-line);
+}
+.email-signup .form-control:focus { border-color: var(--brand-primary); box-shadow: none; }
+
+// Gallery: real photos cover their tile (placeholder tiles keep the cross-hatch).
+.gallery-photo { background-size: cover; background-position: center; }
+
+// Long-form Markdown rhythm (subpage bodies: fees, prose).
+.content > :first-child { margin-top: 0; }
+.content h2 { font-family: var(--font-display); margin-top: 1.75rem; }
+.content h3 { font-family: var(--font-display); margin-top: 1.25rem; }
+.content ul, .content ol { padding-left: 1.25rem; }
